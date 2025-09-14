@@ -11,7 +11,7 @@ export const metadata = {
  
 const banner = <Banner storageKey="some-key">Built on Nextra 4.0 🎉 &nbsp;
     <a
-      href="/blog/tech-decisions"
+      href=""
       style={{ textDecoration: 'underline', color: 'inherit' }}
     >
       Read more
