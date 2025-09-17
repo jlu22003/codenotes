@@ -1,4 +1,4 @@
-import { Footer, Layout, Navbar } from 'nextra-theme-docs'
+import { Footer, Layout, Link, Navbar } from 'nextra-theme-docs'
 import { Banner, Head } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
 import 'nextra-theme-docs/style.css'
@@ -10,12 +10,12 @@ export const metadata = {
 }
  
 const banner = <Banner storageKey="some-key">Built on Nextra 4.0 🎉 &nbsp;
-    <a
+    <Link
       href="/blog/nextraPortfolio"
       style={{ textDecoration: 'underline', color: 'inherit' }}
     >
       Read more
-    </a>
+    </Link>
 </Banner>
 const navbar = (
   <Navbar
