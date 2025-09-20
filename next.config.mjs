@@ -16,18 +16,5 @@ export default withNextra({
       // Path to your `mdx-components` file with extension
       "next-mdx-import-source-file": "./src/app/mdx-components.js",
     },
-  },
-  rules: {
-      "*.svg": {
-        loaders: [
-          {
-            loader: "@svgr/webpack",
-            options: {
-              icon: true, // optional: makes svg scale nicely like icons
-            },
-          },
-        ],
-        as: "*.js",
-      },
-    },
+  }
 });
