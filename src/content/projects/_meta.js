@@ -23,4 +23,4 @@ export default {
         title: 'Rift Rewind',
         type: 'doc'
     },
-}
+} 

@@ -12,7 +12,12 @@ export default {
         type: 'page',
     },
     index: {
-        display: 'hidden'
+        display: 'hidden',
+        theme: {
+            toc: false,
+            layout: 'full',
+            sidebar: false,
+        },
     },
     blog: {
         title: 'Blog',
