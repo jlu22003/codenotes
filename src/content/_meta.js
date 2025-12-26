@@ -1,3 +1,5 @@
+import { Copy } from "lucide-react";
+
 export default {
     portfolio: {
         title: 'Portfolio',
@@ -22,6 +24,5 @@ export default {
     blog: {
         title: 'Blog',
         type: 'page',
-        
     }
 }
