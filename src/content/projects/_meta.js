@@ -1,4 +1,4 @@
-export default {
+const meta = {
     wip: {
         title: 'Work In Progress',
         type: 'doc'
@@ -23,4 +23,6 @@ export default {
         title: 'Rift Rewind',
         type: 'doc'
     },
-} 
+}
+
+export default meta;

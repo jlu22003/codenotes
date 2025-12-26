@@ -3,7 +3,6 @@ import { Footer, Layout, Link, Navbar } from 'nextra-theme-docs'
 import { Banner, Head, Search } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
 import 'nextra-theme-docs/style.css'
-import { ReactNode } from 'react'
 import { Montserrat, Roboto } from 'next/font/google'
 
 // Configure Montserrat for headings

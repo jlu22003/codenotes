@@ -38,7 +38,9 @@ const Projects = ({
     updateSelection();
     carouselApi.on("select", updateSelection);
 
-    return () => carouselApi.off("select", updateSelection);
+    return () => {
+      carouselApi.off("select", updateSelection);
+    };
   }, [carouselApi]);
 
   if (!projects || projects.length === 0) return null;
@@ -120,7 +122,6 @@ const Projects = ({
                       {item.summary}
                     </p>
                     <div className="inline-flex items-center text-sm font-medium">
-                      {/* ✅ Changed from <Link> to plain text - entire card is already clickable */}
                       <span>Read more</span>
                       <ArrowRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
                     </div>

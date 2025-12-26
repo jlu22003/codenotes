@@ -79,7 +79,7 @@ export default function Contact() {
           </h2>
           <p className="text-lg text-muted-foreground">
             Interested in working together or have a question?
-            I'm always open to new opportunities and conversations.
+            I&apos;m always open to new opportunities and conversations.
           </p>
         </div>
 
@@ -119,7 +119,7 @@ export default function Contact() {
                 <div>
                   <p className="font-medium text-primary">Message sent successfully!</p>
                   <p className="text-muted-foreground mt-1">
-                    Thanks for reaching out. I'll get back to you soon.
+                    Thanks for reaching out. I&apos;ll get back to you soon.
                   </p>
                 </div>
               </div>
