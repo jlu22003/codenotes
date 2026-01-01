@@ -20,7 +20,7 @@ interface LatestBlogProps {
 
 const LatestBlog = ({
   heading = "Latest Writing",
-  description = "Occasional thoughts on frontend systems, design decisions, and building products with intention.",
+  description = "Occasional thoughts on frontend systems, design decisions, and the mental models behind how I build and think.",
   buttons = {
     primary: {
       text: "Read the Blog",

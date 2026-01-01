@@ -10,6 +10,8 @@ import {
   Cpu,
   Cloud,
   Paintbrush,
+  Bug,
+  Wrench,
 } from "lucide-react";
 
 export const skillsRowOne = [
@@ -17,24 +19,25 @@ export const skillsRowOne = [
   { label: "TypeScript", icon: Braces },
   { label: "React", icon: Layout },
   { label: "Next.js", icon: Globe },
-  { label: "Tailwind CSS", icon: Paintbrush },
+  { label: "Tailwind", icon: Paintbrush },
   { label: "HTML5", icon: Code },
   { label: "CSS3", icon: Layout },
   { label: "Git", icon: GitBranch },
-  { label: "REST APIs", icon: Cloud },
   { label: "GSAP", icon: Cpu },
+  { label: "shadcn/ui", icon: Paintbrush },
 ];
 
 export const skillsRowTwo = [
-  { label: "Node.js", icon: Terminal },
-  { label: "Django", icon: Database },
-  { label: "PostgreSQL", icon: Database },
-  { label: "Docker", icon: Cpu },
-  { label: "Linux", icon: Terminal },
   { label: "CI/CD", icon: Cloud },
-  { label: "Figma", icon: Paintbrush },
+  { label: "Debugging", icon: Bug },
+  { label: "DevTools", icon: Wrench },
+  { label: "REST APIs", icon: Cloud },
   { label: "UX Thinking", icon: Layout },
-  { label: "Performance", icon: Cpu },
   { label: "Accessibility", icon: Globe },
+  { label: "ServiceNow", icon: Terminal },
+  { label: "Jira", icon: GitBranch },
+  { label: "ASP.NET", icon: Database },
+  { label: "Manual QA", icon: Bug },
 ];
+
 export const allSkills = [...skillsRowOne, ...skillsRowTwo];

@@ -62,9 +62,18 @@ export default async function RootLayout({ children }: {
       suppressHydrationWarning
       className={`${montserrat.variable} ${roboto.variable}`}
     >
-      <Head>
-        {/* Your additional tags should be passed as `children` of `<Head>` element */}
-      </Head>
+      <Head
+        color={{
+          hue: 42,        // Brown/yellow hue (matches your primary color)
+          saturation: 40, // 40% saturation
+          lightness: {
+            light: 43,    // 43% lightness for light mode
+            dark: 65      // 65% lightness for dark mode
+          }
+        }}
+      />
+      {/* Your additional tags should be passed as `children` of `<Head>` element */}
+
       <body>
         <Layout
           banner={banner}
