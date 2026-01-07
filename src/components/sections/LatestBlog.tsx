@@ -30,7 +30,7 @@ const LatestBlog = ({
   className,
 }: LatestBlogProps) => {
   return (
-    <section className={cn("py-24", className)}>
+    <section className={cn("py-24", className)} aria-labelledby="latest-blog-heading">
       <div className="container mx-auto max-w-7xl px-8">
         <div className="rounded-xl bg-accent px-8 py-12 md:px-12 md:py-16">
           <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
@@ -47,14 +47,14 @@ const LatestBlog = ({
             {/* Actions */}
             <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
               {buttons.secondary && (
-                <Button variant="outline" asChild>
+                <Button variant="outline" asChild aria-label="Read more about building my Nextra portfolio">
                   <a href={buttons.secondary.url}>
                     {buttons.secondary.text}
                   </a>
                 </Button>
               )}
               {buttons.primary && (
-                <Button size="lg" asChild>
+                <Button size="lg" asChild aria-label="Read more about other blog posts">
                   <a href={buttons.primary.url}>
                     {buttons.primary.text}
                   </a>

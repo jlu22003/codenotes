@@ -16,7 +16,6 @@ export default function Hero() {
       <div
         id="unicorn-background"
         className="absolute inset-0 z-0"
-        aria-label="Interactive background animation placeholder"
       >
         <div className="w-full h-full" />
       </div>
@@ -31,12 +30,23 @@ export default function Hero() {
           <p className="text-xl sm:text-2xl md:text-4xl text-muted-foreground mb-8 font-light">
             Software Engineer (Frontend)
           </p>
-
           <div className="flex flex-wrap gap-4">
-            <Button size="lg" className="text-lg px-8 py-6">
+            <Button
+              asChild
+              size="lg"
+              className="min-h-12 px-8 text-lg"
+              aria-label="Browse Projects"
+            >
               <Link href="/projects/wip">View Work</Link>
             </Button>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-6">
+
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="min-h-12 px-8 text-lg"
+              aria-label="Contact Me"
+            >
               <Link href="#contact-me">Contact Me</Link>
             </Button>
           </div>

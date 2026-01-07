@@ -65,6 +65,7 @@ const Projects = ({
 
           <div className="mt-8 flex shrink-0 items-center gap-2 md:mt-0">
             <Button
+              aria-label="Previous Projects"
               size="icon"
               variant="outline"
               onClick={() => carouselApi?.scrollPrev()}
@@ -74,6 +75,7 @@ const Projects = ({
               <ArrowLeft className="size-5" />
             </Button>
             <Button
+              aria-label="Next Projects"
               size="icon"
               variant="outline"
               onClick={() => carouselApi?.scrollNext()}
@@ -100,7 +102,7 @@ const Projects = ({
           <CarouselContent className="hide-scrollbar md:-ml-4">
             {projects.map((item: Project) => (
               <CarouselItem key={item.id} className="pl-4 md:max-w-[452px]">
-                <Link href={item.url} className="group flex flex-col h-full">
+                <Link href={item.url} className="group flex flex-col h-full" aria-label={`View project: ${item.title}`}>
                   {/* Image Card */}
                   <div className="aspect-3/2 overflow-hidden rounded-xl">
                     <div className="relative h-full w-full transition-transform duration-300 group-hover:scale-105">
@@ -122,7 +124,9 @@ const Projects = ({
                       {item.summary}
                     </p>
                     <div className="inline-flex items-center text-sm font-medium">
-                      <span>Read more</span>
+                      <span>Read more
+                        <span className="sr-only"> Most recent project: {item.title}</span>
+                      </span>
                       <ArrowRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
                     </div>
                   </div>

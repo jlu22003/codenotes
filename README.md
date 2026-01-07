@@ -12,7 +12,7 @@ This repository contains the source code for a personal portfolio and blog built
 
 ## Live Demo
 <!-- TODO: Update with your live site URL -->
-🔗 [View Live Site](https://your-portfolio-url.com)
+🔗 [View Live Site](https://www.justinklu.com/)
 
 ## Key Features
 
@@ -355,7 +355,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 <!-- TODO: Update with your social links -->
 
 **Justin K. Lu**
-- Portfolio: [your-portfolio-url.com](https://your-portfolio-url.com)
+- Portfolio: [justinklu.com](https://www.justinklu.com/)
 - GitHub: [@jlu22003](https://github.com/jlu22003)
 - Email: justinklu@gmail.com
 - Location: Alpharetta, GA
@@ -365,7 +365,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 If you find this project helpful or inspiring, please consider:
 - Giving it a ⭐️ on GitHub
 - Sharing it with others
-- [Hiring me](mailto:justinklu@gmail.com) for your next project!
+- [Hiring me](mailto:justinklu75@gmail.com) for your next project!
 
 ---
 
