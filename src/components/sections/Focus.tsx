@@ -1,21 +1,26 @@
 // components/sections/Focus.tsx
 import { Card } from "@/components/ui/card";
 
-const focusAreas = [
+interface FocusArea {
+  title: string;
+  description: string;
+}
+
+const focusAreas: FocusArea[] = [
   {
     title: "Product-Minded Engineering",
     description:
-      "I think beyond implementation. Every decision is grounded in user impact, clarity, and long-term maintainability.",
+      "Contributed to evaluating and selecting Next.js for a legacy ASP.NET migration at CDI Credit, then implemented the frontend components and owned the responsive-testing pass before release.",
   },
   {
     title: "Systems & Architecture",
     description:
-      "I care deeply about structure—clean boundaries, predictable patterns, and codebases that scale without friction.",
+      "From a bitmask-based Tic-Tac-Toe engine to a modular Next.js portfolio built on App Router, I default to structures that make the next change cheap, not just the current one work.",
   },
   {
-    title: "Intentional Motion & Polish",
+    title: "Production Reliability & Support",
     description:
-      "Motion should guide attention, not distract. I use animation sparingly to reinforce hierarchy and meaning.",
+      "Production incidents don't get resolved by luck — they get resolved through structured root-cause analysis and escalation workflows I designed and standardized, plus documentation written so the next person didn't have to solve it from scratch.",
   },
 ];
 
@@ -29,8 +34,9 @@ export default function Focus() {
             Focus & Philosophy
           </h2>
           <p className="text-lg text-muted-foreground">
-            I approach frontend engineering as a balance between design,
-            performance, and long-term sustainability.
+            I approach engineering as a balance between building things well
+            and keeping them running well—design, performance, and
+            production reliability all matter.
           </p>
         </div>
 
@@ -54,5 +60,3 @@ export default function Focus() {
     </section>
   );
 }
-
-

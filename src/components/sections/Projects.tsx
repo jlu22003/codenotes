@@ -6,6 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { CarouselApi } from "@/components/ui/carousel";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
@@ -20,7 +21,7 @@ interface ProjectsProps {
 
 const Projects = ({
   heading = "Projects",
-  demoUrl = "/projects/wip",
+  demoUrl = "/projects",
   className,
 }: ProjectsProps) => {
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
@@ -46,7 +47,7 @@ const Projects = ({
   if (!projects || projects.length === 0) return null;
 
   return (
-    <section className={cn("py-32", className)}>
+    <section className={cn("py-24", className)}>
       {/* Header */}
       <div className="container mx-auto max-w-7xl px-8">
         <div className="mb-16 flex flex-col justify-between md:flex-row md:items-end">
@@ -117,6 +118,9 @@ const Projects = ({
 
                   {/* Text Content */}
                   <div className="pt-4">
+                    <Badge variant="outline" className="mb-3 font-mono">
+                      {item.category}
+                    </Badge>
                     <h3 className="mb-2 text-lg md:text-xl font-medium text-foreground line-clamp-2">
                       {item.title}
                     </h3>
@@ -124,9 +128,7 @@ const Projects = ({
                       {item.summary}
                     </p>
                     <div className="inline-flex items-center text-sm font-medium">
-                      <span>Read more
-                        <span className="sr-only"> Most recent project: {item.title}</span>
-                      </span>
+                      <span>Read more</span>
                       <ArrowRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
                     </div>
                   </div>

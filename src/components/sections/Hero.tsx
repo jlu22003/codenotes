@@ -2,40 +2,44 @@
 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import ParticleSphere from "@/components/sections/ParticleSphere";
+import { STATUS_LINE_HEIGHT_PX } from "@/components/ui/StatusLine";
 
 export default function Hero() {
   return (
     <section
       className="relative flex items-end bg-background"
       style={{
-        height:
-          "calc(100dvh - var(--nextra-navbar-height, 64px) - var(--nextra-breadcrumb-height, 48px))",
+        // No breadcrumb term here: --nextra-breadcrumb-height isn't a real
+        // Nextra CSS variable (confirmed absent from the installed package),
+        // and the homepage explicitly disables breadcrumb anyway — subtracting
+        // it was silently shrinking Hero by a phantom 48px on every load.
+        height: `calc(100dvh - var(--nextra-navbar-height, 64px) - ${STATUS_LINE_HEIGHT_PX}px)`,
       }}
     >
       {/* Background */}
       <div
-        id="unicorn-background"
-        className="absolute inset-0 z-0"
+        id="particle-sphere-background"
+        className="absolute inset-0 z-0 pointer-events-none"
       >
-        <div className="w-full h-full" />
+        <ParticleSphere />
       </div>
 
       {/* Content */}
       <div className="relative z-10 container mx-auto max-w-7xl px-8 pb-20 md:pb-32">
         <div className="max-w-4xl">
-          <h1 className="text-5xl sm:text-6xl md:text-8xl font-bold mb-4 leading-tight whitespace-nowrap">
+          <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-4 leading-tight whitespace-nowrap">
             Justin K. Lu
           </h1>
 
           <p className="text-xl sm:text-2xl md:text-4xl text-muted-foreground mb-8 font-light">
-            Software Engineer (Frontend)
+            Software Engineer — Frontend &amp; Production Support
           </p>
           <div className="flex flex-wrap gap-4">
             <Button
               asChild
               size="lg"
               className="min-h-12 px-8 text-lg"
-              aria-label="Browse Projects"
             >
               <Link href="/projects/wip">View Work</Link>
             </Button>

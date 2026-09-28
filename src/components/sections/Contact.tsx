@@ -10,6 +10,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { CheckCircle2, AlertCircle, Send } from "lucide-react";
 import Link from "next/link";
 
+const MESSAGE_MAX_LENGTH = 2000;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+type FieldName = "firstName" | "lastName" | "email" | "message";
+type FieldErrors = Partial<Record<FieldName, string>>;
+
 export default function Contact() {
   const [formData, setFormData] = useState({
     firstName: "",
@@ -19,20 +25,59 @@ export default function Contact() {
   });
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+
+  const validate = (): FieldErrors => {
+    const errors: FieldErrors = {};
+    if (!formData.firstName.trim()) errors.firstName = "First name is required.";
+    if (!formData.lastName.trim()) errors.lastName = "Last name is required.";
+    if (!formData.email.trim()) {
+      errors.email = "Email is required.";
+    } else if (!EMAIL_REGEX.test(formData.email)) {
+      errors.email = "Enter a valid email address.";
+    }
+    if (!formData.message.trim()) {
+      errors.message = "Message is required.";
+    } else if (formData.message.length > MESSAGE_MAX_LENGTH) {
+      errors.message = `Message must be ${MESSAGE_MAX_LENGTH} characters or fewer.`;
+    }
+    return errors;
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFieldErrors((prev) => {
+      if (!prev[name as FieldName]) return prev;
+      const next = { ...prev };
+      delete next[name as FieldName];
+      return next;
     });
+
+    // Clear the stale top-level banner as soon as the user edits anything
+    // after a failure — whether that failure was field-specific or generic
+    // (network error, 500, etc. never sets a field, so the per-field clear
+    // above alone can't catch that case).
+    setStatus((prev) => (prev === "error" ? "idle" : prev));
+    setErrorMessage((prev) => (prev ? "" : prev));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus("loading");
     setErrorMessage("");
+
+    const errors = validate();
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      setStatus("error");
+      setErrorMessage("Please fix the highlighted fields below.");
+      return;
+    }
+
+    setFieldErrors({});
+    setStatus("loading");
 
     try {
       const response = await fetch("/api/contact", {
@@ -50,6 +95,9 @@ export default function Contact() {
       const data = await response.json();
 
       if (!response.ok) {
+        if (data.field) {
+          setFieldErrors({ [data.field as FieldName]: data.error });
+        }
         throw new Error(data.error || "Failed to send message");
       }
 
@@ -61,8 +109,8 @@ export default function Contact() {
     } catch (error) {
       setStatus("error");
       setErrorMessage(
-        error instanceof Error 
-          ? error.message 
+        error instanceof Error
+          ? error.message
           : "Failed to send message. Please try emailing me directly."
       );
       console.error("Contact form error:", error);
@@ -99,8 +147,8 @@ export default function Contact() {
             <ul className="space-y-2 text-muted-foreground">
               <li>
                 <span className="font-medium text-foreground">Email:</span>{" "}
-                <Link href="mailto:justinklu@gmail.com" className="underline hover:text-primary transition-colors">
-                  justinklu@gmail.com
+                <Link href="mailto:justinklu75@gmail.com" className="underline hover:text-primary transition-colors">
+                  justinklu75@gmail.com
                 </Link>
               </li>
               <li>
@@ -114,7 +162,7 @@ export default function Contact() {
           <Card className="p-8 bg-card border border-border/60 shadow-sm">
             {/* Success Message */}
             {status === "success" && (
-              <div className="mb-6 flex items-start gap-3 rounded-md bg-primary/10 border border-primary/20 px-4 py-3 text-sm">
+              <div role="status" className="mb-6 flex items-start gap-3 rounded-md bg-primary/10 border border-primary/20 px-4 py-3 text-sm">
                 <CheckCircle2 className="h-5 w-5 shrink-0 text-primary mt-0.5" />
                 <div>
                   <p className="font-medium text-primary">Message sent successfully!</p>
@@ -126,8 +174,8 @@ export default function Contact() {
             )}
 
             {/* Error Message */}
-            {status === "error" && (
-              <div className="mb-6 flex items-start gap-3 rounded-md bg-destructive/10 border border-destructive/20 px-4 py-3 text-sm">
+            {status === "error" && errorMessage && (
+              <div role="alert" className="mb-6 flex items-start gap-3 rounded-md bg-destructive/10 border border-destructive/20 px-4 py-3 text-sm">
                 <AlertCircle className="h-5 w-5 shrink-0 text-destructive mt-0.5" />
                 <div>
                   <p className="font-medium text-destructive">Failed to send message</p>
@@ -136,7 +184,7 @@ export default function Contact() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} noValidate className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label htmlFor="firstName">First Name</Label>
@@ -147,8 +195,14 @@ export default function Contact() {
                     value={formData.firstName}
                     onChange={handleChange}
                     disabled={status === "loading"}
-                    required
+                    aria-invalid={!!fieldErrors.firstName}
+                    aria-describedby={fieldErrors.firstName ? "firstName-error" : undefined}
                   />
+                  {fieldErrors.firstName && (
+                    <p id="firstName-error" className="text-sm text-destructive">
+                      {fieldErrors.firstName}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="lastName">Last Name</Label>
@@ -159,8 +213,14 @@ export default function Contact() {
                     value={formData.lastName}
                     onChange={handleChange}
                     disabled={status === "loading"}
-                    required
+                    aria-invalid={!!fieldErrors.lastName}
+                    aria-describedby={fieldErrors.lastName ? "lastName-error" : undefined}
                   />
+                  {fieldErrors.lastName && (
+                    <p id="lastName-error" className="text-sm text-destructive">
+                      {fieldErrors.lastName}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -174,8 +234,14 @@ export default function Contact() {
                   value={formData.email}
                   onChange={handleChange}
                   disabled={status === "loading"}
-                  required
+                  aria-invalid={!!fieldErrors.email}
+                  aria-describedby={fieldErrors.email ? "email-error" : undefined}
                 />
+                {fieldErrors.email && (
+                  <p id="email-error" className="text-sm text-destructive">
+                    {fieldErrors.email}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-1.5">
@@ -185,16 +251,23 @@ export default function Contact() {
                   name="message"
                   placeholder="Tell me a bit about what you're working on…"
                   rows={5}
+                  maxLength={MESSAGE_MAX_LENGTH}
                   value={formData.message}
                   onChange={handleChange}
                   disabled={status === "loading"}
-                  required
+                  aria-invalid={!!fieldErrors.message}
+                  aria-describedby={fieldErrors.message ? "message-error" : undefined}
                 />
+                {fieldErrors.message && (
+                  <p id="message-error" className="text-sm text-destructive">
+                    {fieldErrors.message}
+                  </p>
+                )}
               </div>
 
-              <Button 
-                type="submit" 
-                size="lg" 
+              <Button
+                type="submit"
+                size="lg"
                 className="w-full gap-2"
                 disabled={status === "loading"}
                 aria-label="Submit Contact Form"

@@ -8,8 +8,7 @@ const meta = {
     type: "page",
   },
   gallery: {
-    title: "Gallery",
-    type: "page",
+    display: "hidden",
   },
   index: {
     display: "hidden",
@@ -17,6 +16,8 @@ const meta = {
       toc: false,
       layout: "full",
       sidebar: false,
+      breadcrumb: false,
+      pagination: false,
     },
   },
   blog: {

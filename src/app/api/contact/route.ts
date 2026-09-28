@@ -8,9 +8,21 @@ export async function POST(request: Request) {
     const { name, email, message } = body;
 
     // Validate required fields
-    if (!name || !email || !message) {
+    if (!name) {
       return NextResponse.json(
-        { error: "All fields are required" },
+        { error: "Name is required", field: "firstName" },
+        { status: 400 }
+      );
+    }
+    if (!email) {
+      return NextResponse.json(
+        { error: "Email is required", field: "email" },
+        { status: 400 }
+      );
+    }
+    if (!message) {
+      return NextResponse.json(
+        { error: "Message is required", field: "message" },
         { status: 400 }
       );
     }
@@ -19,7 +31,16 @@ export async function POST(request: Request) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return NextResponse.json(
-        { error: "Invalid email format" },
+        { error: "Invalid email format", field: "email" },
+        { status: 400 }
+      );
+    }
+
+    // Validate message length
+    const MESSAGE_MAX_LENGTH = 2000;
+    if (message.length > MESSAGE_MAX_LENGTH) {
+      return NextResponse.json(
+        { error: `Message must be ${MESSAGE_MAX_LENGTH} characters or fewer`, field: "message" },
         { status: 400 }
       );
     }
@@ -59,35 +80,3 @@ export async function POST(request: Request) {
     );
   }
 }
-
-    // ============================================================
-    // TEMPORARY: Console log (for testing)
-    // ============================================================
-//     console.log("📧 Contact form submission:", { name, email, message });
-    
-//     // Uncomment ONE of the options above before deploying!
-
-//     return NextResponse.json(
-//       { message: "Message sent successfully" },
-//       { status: 200 }
-//     );
-//   } catch (error) {
-//     console.error("❌ Contact form error:", error);
-//     return NextResponse.json(
-//       { error: "Failed to send message. Please try again." },
-//       { status: 500 }
-//     );
-//   }
-// }
-
-// Optional: Handle CORS for development
-// export async function OPTIONS(_request: Request) {
-//   return new NextResponse(null, {
-//     status: 200,
-//     headers: {
-//       'Access-Control-Allow-Origin': '*',
-//       'Access-Control-Allow-Methods': 'POST, OPTIONS',
-//       'Access-Control-Allow-Headers': 'Content-Type',
-//     },
-//   });
-// }

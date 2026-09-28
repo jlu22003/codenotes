@@ -83,6 +83,8 @@
   /* Font family variables */
   --font-heading: var(--font-montserrat);
   --font-body: var(--font-roboto);
+  /* Overrides Tailwind's built-in font-mono utility */
+  --font-mono: var(--font-jetbrains-mono);
 }
 
 /* Override specific Nextra styles that might conflict */

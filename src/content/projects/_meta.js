@@ -1,4 +1,7 @@
 const meta = {
+    index: {
+        display: 'hidden'
+    },
     wip: {
         title: 'Work In Progress',
         type: 'doc'
@@ -7,21 +10,35 @@ const meta = {
         title: 'Personal Portfolio',
         type: 'doc'
     },
+    laylocafe: {
+        title: 'Laylo Cafe',
+        type: 'doc'
+    },
+    equaljusticestudios: {
+        title: 'Equal Justice Studios',
+        type: 'doc'
+    },
+    boycott1902: {
+        title: 'Boycott 1902',
+        type: 'doc'
+    },
+    maskimumcarnage: {
+        title: 'Maskimum Carnage',
+        type: 'doc'
+    },
     tictactoe: {
         title: 'Tic Tac Toe',
         type: 'doc'
     },
     securechatapp: {
-        title: 'Secure Chat App',
-        type: 'doc'
+        display: 'hidden'
     },
     raspberrypi: {
         title: 'Raspberry Pi',
         type: 'doc'
     },
     riftrewind: {
-        title: 'Rift Rewind',
-        type: 'doc'
+        display: 'hidden'
     },
 }
 

@@ -357,7 +357,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 **Justin K. Lu**
 - Portfolio: [justinklu.com](https://www.justinklu.com/)
 - GitHub: [@jlu22003](https://github.com/jlu22003)
-- Email: justinklu@gmail.com
+- Email: justinklu75@gmail.com
 - Location: Alpharetta, GA
 
 ## Support
