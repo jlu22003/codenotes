@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle2, AlertCircle, Send } from "lucide-react";
+import { CheckCircle2, AlertCircle, Send, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 const MESSAGE_MAX_LENGTH = 2000;
@@ -122,7 +122,7 @@ export default function Contact() {
       <div className="container mx-auto max-w-7xl px-8">
         {/* Header */}
         <div className="max-w-3xl mb-16">
-          <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-4">
+          <h2 className="text-3xl md:text-4xl text-foreground mb-4">
             Get in Touch
           </h2>
           <p className="text-lg text-muted-foreground">
@@ -136,7 +136,7 @@ export default function Contact() {
           {/* Contact Details */}
           <div className="space-y-6">
             <div>
-              <h3 className="text-xl font-medium text-foreground mb-2">
+              <h3 className="text-xl text-foreground mb-2">
                 Contact Details
               </h3>
               <p className="text-muted-foreground">
@@ -162,10 +162,14 @@ export default function Contact() {
           <Card className="p-8 bg-card border border-border/60 shadow-sm">
             {/* Success Message */}
             {status === "success" && (
-              <div role="status" className="mb-6 flex items-start gap-3 rounded-md bg-primary/10 border border-primary/20 px-4 py-3 text-sm">
-                <CheckCircle2 className="h-5 w-5 shrink-0 text-primary mt-0.5" />
+              // Neutral, not the accent color — DESIGN.md reserves Burnt
+              // Umber for interactive/functional elements, and a passive
+              // confirmation isn't one (error already gets its own reserved
+              // hue, Alert Red, rather than reaching for the accent too).
+              <div role="status" className="mb-6 flex items-start gap-3 rounded-md bg-muted border border-border px-4 py-3 text-sm">
+                <CheckCircle2 className="h-5 w-5 shrink-0 text-foreground mt-0.5" />
                 <div>
-                  <p className="font-medium text-primary">Message sent successfully!</p>
+                  <p className="font-medium text-foreground">Message sent successfully!</p>
                   <p className="text-muted-foreground mt-1">
                     Thanks for reaching out. I&apos;ll get back to you soon.
                   </p>
@@ -185,7 +189,7 @@ export default function Contact() {
             )}
 
             <form onSubmit={handleSubmit} noValidate className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label htmlFor="firstName">First Name</Label>
                   <Input
@@ -274,7 +278,7 @@ export default function Contact() {
               >
                 {status === "loading" ? (
                   <>
-                    <span className="animate-spin">⏳</span>
+                    <Loader2 className="h-4 w-4 animate-spin" />
                     Sending...
                   </>
                 ) : (

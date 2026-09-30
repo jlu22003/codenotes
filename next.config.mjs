@@ -11,15 +11,6 @@ const withNextra = nextra({
 export default withNextra({
   // ... Add regular Next.js options here
 
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "deifkwefumgah.cloudfront.net",
-      },
-    ],
-  },
-
   turbopack: {
     resolveAlias: {
       // Path to your `mdx-components` file with extension

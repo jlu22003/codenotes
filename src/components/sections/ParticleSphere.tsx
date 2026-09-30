@@ -52,17 +52,32 @@ function stepSpring(
   return [nextCurrent, nextVelocity] as const;
 }
 
-// Resolves a CSS custom property (which may be an oklch()/etc. value three.js
-// can't parse directly) to the "rgb(r, g, b)" form THREE.Color understands,
-// by letting the browser's own computed-style resolution do the conversion.
+// Resolves a CSS custom property (an oklch()/etc. value three.js can't parse
+// directly) to a concrete "rgb(r, g, b)" string THREE.Color understands.
+// getComputedStyle's serialization format isn't reliable across browsers —
+// some report resolved OKLCH colors back as rgb(), others as lab() or other
+// CSS Color 4 spaces THREE.Color can't parse — so instead of trusting that
+// string directly, it's rasterized onto a 1x1 canvas and read back as pixel
+// bytes, which are always concrete sRGB regardless of the input color space.
 function resolveCssColor(varName: string, fallback: string) {
   if (typeof document === "undefined") return fallback;
   const probe = document.createElement("div");
   probe.style.color = `var(${varName})`;
   document.body.appendChild(probe);
-  const resolved = getComputedStyle(probe).color;
+  const computed = getComputedStyle(probe).color;
   document.body.removeChild(probe);
-  return resolved || fallback;
+  if (!computed) return fallback;
+
+  const canvas = document.createElement("canvas");
+  canvas.width = 1;
+  canvas.height = 1;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return computed;
+
+  ctx.fillStyle = computed;
+  ctx.fillRect(0, 0, 1, 1);
+  const [r, g, b] = ctx.getImageData(0, 0, 1, 1).data;
+  return `rgb(${r}, ${g}, ${b})`;
 }
 
 // A small soft circular dot, shared by every particle in one draw call, so

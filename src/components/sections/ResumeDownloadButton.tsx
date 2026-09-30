@@ -9,16 +9,37 @@ export default function ResumeDownloadButton() {
   const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
-    const contactSection = document.getElementById("contact-me");
-    if (!contactSection) return;
+    // Hidden while any card/carousel-heavy section actually occupies the
+    // button's own bottom-right corner — confirmed via elementFromPoint
+    // testing that this floating button was overlapping and intercepting
+    // real clicks on Projects cards and Skills marquee content.
+    //
+    // rootMargin shrinks the effective viewport to just that bottom strip
+    // (instead of "anywhere on screen"), so a tall section only counts as
+    // intersecting while it's genuinely near the button — not for its
+    // entire scroll duration, which was hiding the button for ~90% of the
+    // page (including sections like Focus that never overlapped it).
+    // threshold: 0 because the button-corner strip is far smaller than any
+    // section's own height, so a percentage-of-target threshold would
+    // almost never fire — any overlap with that strip is what matters here.
+    const sectionIds = ["projects", "skills", "contact-me"];
+    const sections = sectionIds
+      .map((id) => document.getElementById(id))
+      .filter((el): el is HTMLElement => el !== null);
+    if (sections.length === 0) return;
 
-    // Hide once the Contact section is in view so this floating button stops
-    // overlapping the page's closing section (and its own Send Message button).
+    const intersecting = new Set<Element>();
     const observer = new IntersectionObserver(
-      ([entry]) => setHidden(entry.isIntersecting),
-      { threshold: 0.1 }
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) intersecting.add(entry.target);
+          else intersecting.delete(entry.target);
+        }
+        setHidden(intersecting.size > 0);
+      },
+      { threshold: 0, rootMargin: "-85% 0px 0px 0px" }
     );
-    observer.observe(contactSection);
+    sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
   }, []);
 
@@ -48,11 +69,16 @@ export default function ResumeDownloadButton() {
         </div>
       </div>
 
-      {/* Button */}
+      {/* Button — outline, not the filled/primary treatment, so this
+          persistently-floating convenience action never competes with
+          whatever the page's actual primary CTA is at any given scroll
+          position (DESIGN.md's accent color stays reserved for one signal
+          at a time). */}
       <Button
         onClick={handleDownload}
+        variant="outline"
         size="lg"
-        className="shadow-lg hover:shadow-xl transition-all duration-300 gap-2 group/btn"
+        className="gap-2 group/btn"
         aria-label="Download Resume"
         tabIndex={hidden ? -1 : undefined}
       >

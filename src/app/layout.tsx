@@ -1,6 +1,6 @@
 import './globals.css'
-import { Footer, Layout, Link, Navbar } from 'nextra-theme-docs'
-import { Banner, Head, Search } from 'nextra/components'
+import { Footer, Layout, Navbar } from 'nextra-theme-docs'
+import { Head, Search } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
 import 'nextra-theme-docs/style.css'
 import { Montserrat, Roboto, JetBrains_Mono } from 'next/font/google'
@@ -59,15 +59,6 @@ export const metadata = {
   },
 }
 
-const banner = <Banner storageKey="some-key">
-  <Link
-    href="/blog/nextraPortfolio"
-    style={{ textDecoration: 'underline', color: 'inherit' }}
-  >
-    Read more about building with Nextra 4.0 🎉
-  </Link>
-</Banner>
-
 const navbar = (
   <>
     <Navbar
@@ -114,7 +105,6 @@ export default async function RootLayout({ children }: {
       <body>
         <AccessibilityPatches />
         <Layout
-          banner={banner}
           navbar={navbar}
           pageMap={await getPageMap()}
           docsRepositoryBase="https://github.com/jlu22003/codenotes/tree/main"

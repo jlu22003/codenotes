@@ -140,12 +140,4 @@
   .dark .bg-subtle {
     background-color: oklch(0.22 0 0);
   }
-  
-  .bg-emphasis {
-    background-color: oklch(0.88 0.03 250);
-  }
-  
-  .dark .bg-emphasis {
-    background-color: oklch(0.26 0.06 250);
-  }
 }

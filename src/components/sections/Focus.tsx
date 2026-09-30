@@ -30,7 +30,7 @@ export default function Focus() {
       <div className="container mx-auto max-w-7xl px-8">
         {/* Section Header */}
         <div className="mb-16 max-w-3xl">
-          <h2 className="mb-4 text-3xl font-semibold text-foreground md:text-4xl">
+          <h2 className="mb-4 text-3xl text-foreground md:text-4xl">
             Focus & Philosophy
           </h2>
           <p className="text-lg text-muted-foreground">
@@ -47,7 +47,7 @@ export default function Focus() {
               key={item.title}
               className="p-6 bg-card border border-border shadow-sm"
             >
-              <h3 className="mb-2 text-xl font-medium text-foreground">
+              <h3 className="mb-2 text-xl text-foreground">
                 {item.title}
               </h3>
               <p className="leading-relaxed text-muted-foreground">

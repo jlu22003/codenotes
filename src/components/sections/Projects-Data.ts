@@ -8,9 +8,12 @@ export interface Project {
   category: string;
 }
 
-// Shared placeholder until each project has a real screenshot.
-const PLACEHOLDER_IMAGE =
-  "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/placeholder-dark-1.svg";
+// Shared placeholder until each project has a real screenshot. Exported so
+// the card component can detect it and visually mark it as a placeholder
+// instead of letting it pass for a real screenshot. Self-hosted rather than
+// pulled from a third-party demo-block CDN — it backed 4 of 6 project cards,
+// a single point of failure outside this project's control.
+export const PLACEHOLDER_IMAGE = "/images/placeholder-project.svg";
 
 export const projects: Project[] = [
   {
@@ -19,7 +22,7 @@ export const projects: Project[] = [
     summary:
       "Architected an AI-assisted Shopify theme workflow with custom Liquid components, giving the client independent control over product updates.",
     url: "/projects/laylocafe",
-    image: PLACEHOLDER_IMAGE,
+    image: "/images/projects/laylocafe.png",
     category: "Client Project",
   },
   {
@@ -46,7 +49,7 @@ export const projects: Project[] = [
     summary:
       "Took ownership of an in-progress WordPress project as a contractor, maintaining site stability and managing delivery independently.",
     url: "/projects/boycott1902",
-    image: PLACEHOLDER_IMAGE,
+    image: "/images/projects/boycott1902.png",
     category: "Client Project",
   },
   {

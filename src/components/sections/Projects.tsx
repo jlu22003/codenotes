@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { WheelGesturesPlugin } from "embla-carousel-wheel-gestures";
 
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import type { CarouselApi } from "@/components/ui/carousel";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 
-import { projects, Project } from "./Projects-Data";
+import { projects, Project, PLACEHOLDER_IMAGE } from "./Projects-Data";
 
 interface ProjectsProps {
   heading?: string;
@@ -47,12 +48,12 @@ const Projects = ({
   if (!projects || projects.length === 0) return null;
 
   return (
-    <section className={cn("py-24", className)}>
+    <section id="projects" className={cn("py-24", className)}>
       {/* Header */}
       <div className="container mx-auto max-w-7xl px-8">
         <div className="mb-16 flex flex-col justify-between md:flex-row md:items-end">
           <div>
-            <h2 className="mb-4 text-3xl md:text-4xl font-semibold text-foreground">
+            <h2 className="mb-4 text-3xl md:text-4xl text-foreground">
               {heading}
             </h2>
             <Link
@@ -98,22 +99,45 @@ const Projects = ({
               "(max-width: 768px)": { dragFree: true },
             },
           }}
+          plugins={[WheelGesturesPlugin()]}
           className="relative"
         >
           <CarouselContent className="hide-scrollbar md:-ml-4">
-            {projects.map((item: Project) => (
-              <CarouselItem key={item.id} className="pl-4 md:max-w-[452px]">
+            {projects.map((item: Project, index: number) => {
+              const isPlaceholder = item.image === PLACEHOLDER_IMAGE;
+              return (
+              <CarouselItem
+                key={item.id}
+                className="pl-4 md:max-w-[452px]"
+                aria-label={`${index + 1} of ${projects.length}`}
+              >
                 <Link href={item.url} className="group flex flex-col h-full" aria-label={`View project: ${item.title}`}>
                   {/* Image Card */}
-                  <div className="aspect-3/2 overflow-hidden rounded-xl">
-                    <div className="relative h-full w-full transition-transform duration-300 group-hover:scale-105">
+                  <div className="relative aspect-3/2 overflow-hidden rounded-xl">
+                    <div
+                      className={cn(
+                        "relative h-full w-full transition-transform duration-300 group-hover:scale-105",
+                        // Placeholder art shouldn't out-compete a real
+                        // screenshot for attention — recede, don't compete.
+                        isPlaceholder && "opacity-60 grayscale"
+                      )}
+                    >
                       <Image
                         src={item.image}
                         alt={item.title}
                         fill
+                        sizes="(min-width: 768px) 452px, 100vw"
                         className="h-full w-full object-cover object-center"
                       />
                     </div>
+                    {isPlaceholder && (
+                      <Badge
+                        variant="outline"
+                        className="absolute bottom-2 left-2 font-mono bg-background/90"
+                      >
+                        Screenshot pending
+                      </Badge>
+                    )}
                   </div>
 
                   {/* Text Content */}
@@ -121,7 +145,7 @@ const Projects = ({
                     <Badge variant="outline" className="mb-3 font-mono">
                       {item.category}
                     </Badge>
-                    <h3 className="mb-2 text-lg md:text-xl font-medium text-foreground line-clamp-2">
+                    <h3 className="mb-2 text-lg md:text-xl text-foreground line-clamp-2">
                       {item.title}
                     </h3>
                     <p className="mb-6 text-sm md:text-base text-muted-foreground line-clamp-2">
@@ -134,7 +158,8 @@ const Projects = ({
                   </div>
                 </Link>
               </CarouselItem>
-            ))}
+              );
+            })}
           </CarouselContent>
         </Carousel>
       </div>

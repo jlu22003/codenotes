@@ -14,7 +14,13 @@ import Contact from "@/components/sections/Contact";
 import SectionDivider from "@/components/ui/SectionDivider";
 import ResumeDownloadButton from "@/components/sections/ResumeDownloadButton";
 
-
+{/* Nextra's <article> shell always applies its own px-4/md:px-12 side
+padding, regardless of the "full" layout mode set for this route in
+_meta.js. Every section below already manages its own max-w-7xl px-8
+container per DESIGN.md — this wrapper cancels the article's padding so
+that px-8 is the only side inset actually in effect, instead of the two
+stacking. */}
+<div className="-mx-4 md:-mx-12">
 <Hero />
 <DifferentiatorStrip />
 <SectionDivider />
@@ -28,3 +34,4 @@ import ResumeDownloadButton from "@/components/sections/ResumeDownloadButton";
 <SectionDivider />
 <Contact/>
 <ResumeDownloadButton />
+</div>

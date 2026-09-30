@@ -49,7 +49,7 @@ const LatestBlog = async ({
             <div className="max-w-2xl">
               <h2
                 id="latest-blog-heading"
-                className="text-3xl md:text-4xl font-semibold text-foreground mb-4"
+                className="text-3xl md:text-4xl text-foreground mb-4"
               >
                 {heading}
               </h2>

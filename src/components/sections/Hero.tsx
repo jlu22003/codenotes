@@ -15,6 +15,10 @@ export default function Hero() {
         // and the homepage explicitly disables breadcrumb anyway — subtracting
         // it was silently shrinking Hero by a phantom 48px on every load.
         height: `calc(100dvh - var(--nextra-navbar-height, 64px) - ${STATUS_LINE_HEIGHT_PX}px)`,
+        // Floor so short viewports (landscape phones) can't shrink the
+        // section below what the heading/subtitle/buttons actually need —
+        // the section scrolls a little instead of the content overrunning it.
+        minHeight: "480px",
       }}
     >
       {/* Background */}
@@ -28,11 +32,11 @@ export default function Hero() {
       {/* Content */}
       <div className="relative z-10 container mx-auto max-w-7xl px-8 pb-20 md:pb-32">
         <div className="max-w-4xl">
-          <h1 className="text-4xl sm:text-6xl md:text-8xl font-bold mb-4 leading-tight whitespace-nowrap">
+          <h1 className="text-4xl sm:text-6xl md:text-8xl mb-4 leading-tight whitespace-nowrap">
             Justin K. Lu
           </h1>
 
-          <p className="text-xl sm:text-2xl md:text-4xl text-muted-foreground mb-8 font-light">
+          <p className="text-xl sm:text-2xl md:text-4xl text-muted-foreground mb-8">
             Software Engineer — Frontend &amp; Production Support
           </p>
           <div className="flex flex-wrap gap-4">

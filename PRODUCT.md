@@ -43,7 +43,7 @@ Most engineering portfolios show only what was shipped. This one also shows the 
 - Real live client sites: laylocafe.com, equaljusticestudios.com, boycott1902.com.
 - Real personal/game-jam projects: Tic-Tac-Toe bitmask engine, Maskimum Carnage (Global Game Jam 2026, Unity/C#).
 - GitHub (github.com/jlu22003) and LinkedIn (linkedin.com/in/justin-lu-jkl) profiles.
-- **Explicit absence, do not fabricate to fill it:** no real screenshots exist yet for any project card — all six currently share one placeholder image. This is a known, tracked gap, not an oversight to paper over.
+- **Explicit absence, do not fabricate to fill it:** Laylo Cafe and Boycott 1902 have real screenshots; Equal Justice Studios, Maskimum Carnage, Personal Portfolio, and Tic-Tac-Toe still share one placeholder image. This is a known, tracked gap, not an oversight to paper over.
 
 ## Product Principles
 1. Never fabricate — every claim on the site traces to the résumé or real, verifiable work.
