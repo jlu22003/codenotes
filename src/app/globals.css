@@ -11,7 +11,14 @@
   --card-foreground: oklch(0.2435 0 0);
   --popover: oklch(0.9911 0 0);
   --popover-foreground: oklch(0.2435 0 0);
-  --primary: oklch(0.4341 0.0392 41.9938);
+  /* Richer accent refresh (same lightness as before — contrast unaffected,
+     actually improves slightly), hue nudged from 42 to 44.36 and chroma
+     nearly doubled from 0.0392 to 0.075. Inspired by the "Mocha Mousse"
+     shadcn community theme's hue family, re-derived at this project's own
+     lightness so it still passes contrast as both text (7.8-8.0:1) and a
+     button fill with white text (8.2:1) — the stock theme's own lighter
+     value (L=0.61) fails both of those at ~3.7-3.9:1. */
+  --primary: oklch(0.4341 0.0750 44.3600);
   --primary-foreground: oklch(1.0000 0 0);
   --secondary: oklch(0.9200 0.0651 74.3695);
   --secondary-foreground: oklch(0.3499 0.0685 40.8288);
@@ -19,11 +26,17 @@
   --muted-foreground: oklch(0.5032 0 0);
   --accent: oklch(0.9310 0 0);
   --accent-foreground: oklch(0.2435 0 0);
-  --destructive: oklch(0.6271 0.1936 33.3390);
+  /* Darkened from the original oklch(0.6271 0.1936 33.3390) — that value
+     failed WCAG AA (~3.7:1) for destructive/error text on this light-mode
+     background. This lightness is the darkest in-gamut point at this hue
+     that clears 4.5:1 against every real usage (plain background, card,
+     and the destructive/10-tinted error banner). Dark mode's own value is
+     unchanged — it already passes AA there. */
+  --destructive: oklch(0.5000 0.1800 33.3390);
   --destructive-foreground: oklch(1.0000 0 0);
   --border: oklch(0.8822 0 0);
   --input: oklch(0.8822 0 0);
-  --ring: oklch(0.4341 0.0392 41.9938);
+  --ring: oklch(0.4341 0.0750 44.3600);
 }
 
 /* Dark mode with strong contrast */
@@ -34,19 +47,36 @@
   --card-foreground: oklch(0.9491 0 0);
   --popover: oklch(0.2134 0 0);
   --popover-foreground: oklch(0.9491 0 0);
-  --primary: oklch(0.9247 0.0524 66.1732);
-  --primary-foreground: oklch(0.2029 0.0240 200.1962);
+  /* Rotated to match light mode's refreshed accent hue (44.36, was 66.17) so
+     the brand color reads as the same hue family across themes, not a
+     different one. Lightness nudged down slightly (0.9247->0.90) because
+     the old chroma (0.0524) clips out of gamut at this hue at the original
+     lightness; 0.90 is the highest lightness that keeps a comparable
+     chroma (0.055) fully in gamut. Contrast stays excellent either way
+     (12.85-13.8:1). primary-foreground was an unrelated stray cyan hue
+     (200deg) with negligible chroma (0.024) — simplified to a plain
+     neutral matching this theme's own near-black background, since the
+     original hue connected to nothing else in the palette. */
+  --primary: oklch(0.9000 0.0550 44.3600);
+  --primary-foreground: oklch(0.1776 0 0);
   --secondary: oklch(0.3163 0.0190 63.6992);
-  --secondary-foreground: oklch(0.9247 0.0524 66.1732);
+  --secondary-foreground: oklch(0.9000 0.0550 44.3600);
   --muted: oklch(0.2520 0 0);
   --muted-foreground: oklch(0.7699 0 0);
   --accent: oklch(0.2850 0 0);
   --accent-foreground: oklch(0.9491 0 0);
   --destructive: oklch(0.6271 0.1936 33.3390);
-  --destructive-foreground: oklch(1.0000 0 0);
+  /* Dark, not white — this red has to stay light enough for destructive
+     *text* to read against the dark page background (4.89:1, passing),
+     which leaves white-on-this-red at only 3.87:1 (failing AA). Dark text
+     on the same red measures 4.89:1, so it's the foreground that flips
+     between themes, not the red itself. (Currently unused live — no
+     destructive button/badge variant is invoked anywhere on the site —
+     but worth being correct rather than leaving a landmine.) */
+  --destructive-foreground: oklch(0.1776 0 0);
   --border: oklch(0.2351 0.0115 91.7467);
   --input: oklch(0.4017 0 0);
-  --ring: oklch(0.9247 0.0524 66.1732);
+  --ring: oklch(0.9000 0.0550 44.3600);
 }
 
 /* Map to Tailwind color utilities */

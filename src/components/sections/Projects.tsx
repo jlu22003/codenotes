@@ -124,7 +124,7 @@ const Projects = ({
                     >
                       <Image
                         src={item.image}
-                        alt={item.title}
+                        alt={isPlaceholder ? `${item.title} (screenshot pending)` : item.title}
                         fill
                         sizes="(min-width: 768px) 452px, 100vw"
                         className="h-full w-full object-cover object-center"

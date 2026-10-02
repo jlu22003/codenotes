@@ -2,7 +2,7 @@
 name: Justin Lu — Portfolio
 description: A restrained, fact-driven design system for a dual build/run engineering portfolio — quiet neutrals, one warm accent, technical type for what's provable.
 colors:
-  burnt-umber: "oklch(0.4341 0.0392 41.9938)"
+  burnt-umber: "oklch(0.4341 0.0750 44.3600)"
   burnt-umber-foreground: "oklch(1.0000 0 0)"
   sandpaper-tan: "oklch(0.9200 0.0651 74.3695)"
   sandpaper-tan-foreground: "oklch(0.3499 0.0685 40.8288)"
@@ -49,7 +49,7 @@ components:
     padding: "0.5rem 1rem"
     height: "2.25rem"
   button-primary-hover:
-    backgroundColor: "oklch(0.4341 0.0392 41.9938 / 0.9)"
+    backgroundColor: "oklch(0.4341 0.0750 44.3600 / 0.9)"
   button-outline:
     backgroundColor: "{colors.paper-white}"
     textColor: "{colors.ink-charcoal}"
@@ -94,10 +94,10 @@ This is not a glassy SaaS-marketing aesthetic: no gradients, no glassmorphism, n
 
 ## Colors
 
-Nearly achromatic (chroma ≈ 0) neutrals carry the page; a single warm, low-chroma hue does all of the accent work. Values below are light mode (the default); dark mode swaps each role to its own OKLCH pair defined in `.dark`, preserved in the sidecar rather than restated here.
+Nearly achromatic (chroma ≈ 0) neutrals carry the page; a single warm, low-chroma hue does all of the accent work. Values below are light mode (the default); dark mode swaps each role to its own OKLCH pair defined in `.dark`, preserved in the sidecar rather than restated here. The accent's hue (44.36) is now shared across both themes — dark mode previously carried an unrelated hue (66.17) left over from an earlier palette generation; it's been rotated to match so the brand color reads as one consistent hue, just lighter in dark mode, not a different color.
 
 ### Primary
-- **Burnt Umber** (`oklch(0.4341 0.0392 41.9938)`): the site's only non-neutral hue. Used exclusively for interactive and functional elements — primary buttons, links, focus rings, active states. Never used decoratively.
+- **Burnt Umber** (`oklch(0.4341 0.0750 44.3600)`): the site's only non-neutral hue — refreshed from an earlier, flatter value (`oklch(0.4341 0.0392 41.9938)`) to read richer and more confident at the same lightness, so contrast is unaffected (still 7.7-8.1:1 across every real usage). Hue inspired by the "Mocha Mousse" shadcn community theme, re-derived at this project's own lightness since the stock theme's lighter value fails contrast here. Used exclusively for interactive and functional elements — primary buttons, links, focus rings, active states. Never used decoratively.
 
 ### Secondary
 - **Sandpaper Tan** (`oklch(0.9200 0.0651 74.3695)`): a lighter, warmer neutral-adjacent tone used for secondary buttons and low-emphasis accent surfaces where Burnt Umber would be too heavy.

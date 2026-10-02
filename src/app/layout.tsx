@@ -92,7 +92,7 @@ export default async function RootLayout({ children }: {
     >
       <Head
         color={{
-          hue: 42,        // Brown/yellow hue (matches your primary color)
+          hue: 44,        // Brown/yellow hue (matches your primary color)
           saturation: 40, // 40% saturation
           lightness: {
             light: 43,    // 43% lightness for light mode

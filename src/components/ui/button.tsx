@@ -23,8 +23,12 @@ const buttonVariants = cva(
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
         sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        icon: "size-9",
+        // 44px — the WCAG/mobile touch-target minimum. Was h-10 (40px),
+        // failing that minimum for every button using this size.
+        lg: "h-11 rounded-md px-6 has-[>svg]:px-4",
+        // 44px, same reasoning — the only "icon" usage on the site is the
+        // carousel's prev/next controls.
+        icon: "size-11",
         "icon-sm": "size-8",
         "icon-lg": "size-10",
       },
