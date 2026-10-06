@@ -27,18 +27,45 @@ const PROJECT_TECH_STACK: Record<string, string[]> = {
   "/projects/tictactoe": ["C"],
 };
 
+// Route -> short status list, rendered under the tech stack in the same
+// right-side TOC column instead of taking up body space.
+const PROJECT_PLANNED_UPDATES: Record<string, string[]> = {
+  "/projects/personalportfolio": [
+    "Portfolio Page Updates",
+    "Contact Section Updates",
+  ],
+};
+
 export default function TocTechStack() {
   const pathname = usePathname();
   const tags = PROJECT_TECH_STACK[pathname];
-  if (!tags) return null;
+  const plannedUpdates = PROJECT_PLANNED_UPDATES[pathname];
+
+  if (!tags && !plannedUpdates) return null;
 
   return (
-    <div className="flex flex-wrap justify-start gap-2">
-      {tags.map((tag) => (
-        <Badge key={tag} variant="outline" className="font-mono">
-          {tag}
-        </Badge>
-      ))}
+    <div className="flex flex-col gap-6">
+      {tags && (
+        <div className="flex flex-wrap justify-start gap-2">
+          {tags.map((tag) => (
+            <Badge key={tag} variant="outline" className="font-mono">
+              {tag}
+            </Badge>
+          ))}
+        </div>
+      )}
+      {plannedUpdates && (
+        <div>
+          <p className="mb-2 text-sm font-medium text-foreground">
+            Planned Updates
+          </p>
+          <ul className="space-y-1.5 text-sm text-muted-foreground">
+            {plannedUpdates.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }

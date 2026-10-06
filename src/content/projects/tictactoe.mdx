@@ -2,11 +2,26 @@
 title: Tic-Tac-Toe — Optimized with Bitmasking
 ---
 
+import ProjectHero from "@/components/ui/ProjectHero";
+import ProjectContactCTA from "@/components/ui/ProjectContactCTA";
+
+# Tic-Tac-Toe — Optimized with Bitmasking
+
+<ProjectHero id="tic-tac-toe" />
+
 ## Context
-Wanted to explore low-level performance optimization by building a simple game engine from first principles.
+[github.com/jlu22003/tictactoe](https://github.com/jlu22003/tictactoe)
+
+Many beginner game projects tightly couple UI rendering, input parsing, and state management into one monolithic function — usually all inside `main()` — which makes the code hard to maintain or extend. The goal here was to architect a lightweight, modular turn-based game in standard C to practice clean separation of concerns, defensive input handling, and structured data encapsulation.
 
 ## Implementation
-Engineered a C-based game engine using bitmap board representation instead of a naive array-based board.
+- **Separation of concerns:** isolated the core game mechanics and rule validation (`game.h`/`game.c`) from the application's execution flow (`main.c`).
+- **Deterministic state control:** an event-driven main loop orchestrates the full game lifecycle — handling real-time player input, validating move legality against state bounds, checking win/draw conditions every tick, and toggling the current player.
+- **Low-level memory management:** board state is bitmasked inside standard C structs rather than a naive array, avoiding dynamic allocation overhead and keeping execution deterministic and free of memory leaks.
 
 ## Impact
-Reduced win-condition checks toward constant-time complexity.
+- **Performance:** bitmask-based win-condition checks push toward constant-time complexity instead of scanning the board.
+- **Architectural foundation:** a reusable boilerplate pattern for procedural state machines, extensible to other grid-based games or a graphical backend.
+- **Code quality:** disciplined engineering practices — error recovery for invalid input, clean modularity — even within a constrained, low-level language.
+
+<ProjectContactCTA />
