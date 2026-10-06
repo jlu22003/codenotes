@@ -29,6 +29,22 @@ export default function Hero() {
         <ParticleSphere />
       </div>
 
+      {/* Feathered scrim behind the text block — a radial fade of the
+          page background, not a literal blur: backdrop-filter doesn't
+          composite against the particle sphere's WebGL canvas (confirmed —
+          even a 40px blur produced zero visible change), so this reaches
+          the same practical goal — the particle field recedes behind the
+          text instead of competing with it — through a soft gradient
+          fade instead, feathered via the gradient's own falloff rather
+          than a hard-edged box. */}
+      <div
+        className="absolute inset-0 z-[5] pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 60% 70% at 25% 78%, var(--background) 0%, color-mix(in oklab, var(--background) 60%, transparent) 45%, transparent 75%)",
+        }}
+      />
+
       {/* Content */}
       <div className="relative z-10 container mx-auto max-w-7xl px-8 pb-20 md:pb-32">
         <div className="max-w-4xl">
