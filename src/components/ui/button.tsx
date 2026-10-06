@@ -12,8 +12,16 @@ const buttonVariants = cva(
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+        // dark:hover:bg-input/50 was stock shadcn boilerplate: --input and
+        // --accent-foreground happen to share the exact same dark-mode
+        // value in this project's tokens, so that background and the
+        // hover:text-accent-foreground text above rendered at nearly
+        // identical lightness — a near-invisible hover state. DESIGN.md
+        // says outline buttons hover-fill with the accent in both themes;
+        // dropping the dark-specific background override lets the
+        // universal hover:bg-accent rule do that correctly.
         outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:

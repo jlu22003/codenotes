@@ -1,7 +1,17 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import * as THREE from "three";
+import {
+  BufferAttribute,
+  BufferGeometry,
+  CanvasTexture,
+  Color,
+  PerspectiveCamera,
+  Points,
+  PointsMaterial,
+  Scene,
+  WebGLRenderer,
+} from "three";
 
 interface ParticleSphereProps {
   count?: number;
@@ -53,10 +63,10 @@ function stepSpring(
 }
 
 // Resolves a CSS custom property (an oklch()/etc. value three.js can't parse
-// directly) to a concrete "rgb(r, g, b)" string THREE.Color understands.
+// directly) to a concrete "rgb(r, g, b)" string Color understands.
 // getComputedStyle's serialization format isn't reliable across browsers —
 // some report resolved OKLCH colors back as rgb(), others as lab() or other
-// CSS Color 4 spaces THREE.Color can't parse — so instead of trusting that
+// CSS Color 4 spaces Color can't parse — so instead of trusting that
 // string directly, it's rasterized onto a 1x1 canvas and read back as pixel
 // bytes, which are always concrete sRGB regardless of the input color space.
 function resolveCssColor(varName: string, fallback: string) {
@@ -103,7 +113,7 @@ function createDotTexture() {
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, size, size);
 
-  return new THREE.CanvasTexture(canvas);
+  return new CanvasTexture(canvas);
 }
 
 export default function ParticleSphere({
@@ -117,11 +127,11 @@ export default function ParticleSphere({
     const container = containerRef.current;
     if (!container) return;
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+    const scene = new Scene();
+    const camera = new PerspectiveCamera(50, 1, 0.1, 100);
     camera.position.z = 6;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);
@@ -152,18 +162,18 @@ export default function ParticleSphere({
       explosionDistances[i] = randomBetween(EXPLOSION_DISTANCE_MIN, EXPLOSION_DISTANCE_MAX) * radius;
     }
 
-    const geometry = new THREE.BufferGeometry();
+    const geometry = new BufferGeometry();
     // A separate, live copy — mutated during an explosion, reset to
     // basePositions when idle — so basePositions itself always stays the
     // untouched source of truth each frame's displacement is computed from.
     geometry.setAttribute(
       "position",
-      new THREE.BufferAttribute(new Float32Array(basePositions), 3)
+      new BufferAttribute(new Float32Array(basePositions), 3)
     );
 
     const dotTexture = createDotTexture();
-    const material = new THREE.PointsMaterial({
-      color: new THREE.Color(resolveCssColor("--foreground", "#3a3a3a")),
+    const material = new PointsMaterial({
+      color: new Color(resolveCssColor("--foreground", "#3a3a3a")),
       size: 0.045,
       map: dotTexture ?? undefined,
       transparent: true,
@@ -172,7 +182,7 @@ export default function ParticleSphere({
       depthWrite: false,
     });
 
-    const points = new THREE.Points(geometry, material);
+    const points = new Points(geometry, material);
     scene.add(points);
 
     const resize = () => {
@@ -214,7 +224,7 @@ export default function ParticleSphere({
     let lastScrollY = window.scrollY;
     let explosionAmount = 0;
     let explosionVelocity = 0;
-    const positionAttribute = geometry.attributes.position as THREE.BufferAttribute;
+    const positionAttribute = geometry.attributes.position as BufferAttribute;
     const livePositions = positionAttribute.array as Float32Array;
 
     if (prefersReducedMotion) {

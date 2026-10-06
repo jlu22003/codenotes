@@ -2,15 +2,24 @@
 title: Personal Portfolio
 ---
 
+import ProjectHero from "@/components/ui/ProjectHero";
+import ProjectContactCTA from "@/components/ui/ProjectContactCTA";
+
+# Personal Portfolio
+
+<ProjectHero id="personal-portfolio" />
+
 ## Context
-Wanted a real, shipped portfolio that could also serve as an ongoing testbed for component architecture and routing patterns.
+Wanted a real, shipped portfolio that could also serve as an ongoing testbed for component architecture and routing patterns — including the page you're reading right now.
 
 ## Implementation
-Built a modular Next.js portfolio using App Router and reusable React components.
+Built a modular Next.js 15 portfolio on the App Router with reusable React components, a WebGL particle-sphere hero built directly in Three.js, a real contact form backed by the Resend API (not a mailto placeholder), and site-wide search powered by Pagefind.
 
 ## Impact
-Serves as a live testbed for new component and routing patterns — this site itself is iterated on directly as those patterns evolve.
+Serves as a live testbed for new component and routing patterns — this site itself is iterated on directly as those patterns evolve, and its own architecture is referenced here as evidence of the engineering practice behind it.
 
 ## Planned Updates
 - Portfolio Page Updates
 - Contact Section Updates
+
+<ProjectContactCTA />

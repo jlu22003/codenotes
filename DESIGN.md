@@ -80,43 +80,45 @@ components:
 
 **Creative North Star: "The Field Notebook"**
 
-The portfolio reads like a technical logbook kept by someone who has actually been on call: quiet neutral pages, facts set in monospace, and exactly one warm ink color reserved for the few things that ask for action. Nothing is decorated for its own sake — the restraint is the point, because the audience (hiring managers and freelance clients) is here to judge whether this person can build and run real software, not whether he can design a flashy page.
+The portfolio reads like a technical logbook kept by someone who has actually been on call: quiet neutral pages, facts set in monospace, and exactly one warm highlighter-cream mark reserved for the few things that ask for attention. Nothing is decorated for its own sake — the restraint is the point, because the audience (hiring managers and freelance clients) is here to judge whether this person can build and run real software, not whether he can design a flashy page.
 
-The palette stays almost entirely achromatic — near-white pages, near-black ink, a handful of gray steps for hierarchy — so that Burnt Umber, the single warm accent, reads as a deliberate signal every time it appears: a link, a button, a focus ring, an active tab. Motion follows the same discipline: nearly everything is feedback (hover states, spring-following cursor, scroll response) rather than decoration, with exactly one confirmed exception — the hero's WebGL particle sphere — which earns its atmosphere because it was chosen as the site's one deliberate signature, not defaulted into as ornament.
+The palette went fully achromatic for its primary actions — buttons, links, and focus states are plain graphite ink, not a brand color — with the only actual hue in the system reserved for the accent role: a pale, warm cream used for hover states and wayfinding highlights (sidebar active item, TOC active section). That inversion is deliberate: it reads less like "a brand color with neutrals around it" and more like an actual notebook — pencil-gray writing, with a highlighter pass marking what matters right now. Motion follows the same discipline: nearly everything is feedback (hover states, spring-following cursor, scroll response) rather than decoration, with exactly one confirmed exception — the hero's WebGL particle sphere — which earns its atmosphere because it was chosen as the site's one deliberate signature, not defaulted into as ornament.
 
-This is not a glassy SaaS-marketing aesthetic: no gradients, no glassmorphism, no multi-hue accent systems, no heavy card shadows. It sits closer to well-kept internal documentation than a landing page — quietly warm rather than quiet-and-cold, because of the one accent color and the sphere.
+This is not a glassy SaaS-marketing aesthetic: no gradients, no glassmorphism, no multi-hue accent systems, no heavy card shadows. It sits closer to well-kept internal documentation than a landing page — a working notebook, not a brand board.
 
 **Key Characteristics:**
-- Achromatic-first palette with a single reserved warm accent (Burnt Umber)
+- Fully achromatic primary actions (buttons, links, focus rings); the only real color lives in the accent/highlight role
 - JetBrains Mono exclusively for verifiable facts — stats, dates, tags, code — never for prose or headings
 - Flat-at-rest surfaces; shadow appears only to mark a real boundary, never for lift or drama
 - One confirmed motion exception (the hero particle sphere); everything else is state feedback and respects `prefers-reduced-motion`
 
 ## Colors
 
-Nearly achromatic (chroma ≈ 0) neutrals carry the page; a single warm, low-chroma hue does all of the accent work. Values below are light mode (the default); dark mode swaps each role to its own OKLCH pair defined in `.dark`, preserved in the sidecar rather than restated here. The accent's hue (44.36) is now shared across both themes — dark mode previously carried an unrelated hue (66.17) left over from an earlier palette generation; it's been rotated to match so the brand color reads as one consistent hue, just lighter in dark mode, not a different color.
+Primary, secondary, and every neutral are achromatic (chroma = 0) — genuine grayscale, not a low-chroma tint. The one real hue in the system lives in the accent role. Values below are light mode (the default); dark mode swaps each role to its own OKLCH pair defined in `.dark`, preserved in the sidecar.
 
 ### Primary
-- **Burnt Umber** (`oklch(0.4341 0.0750 44.3600)`): the site's only non-neutral hue — refreshed from an earlier, flatter value (`oklch(0.4341 0.0392 41.9938)`) to read richer and more confident at the same lightness, so contrast is unaffected (still 7.7-8.1:1 across every real usage). Hue inspired by the "Mocha Mousse" shadcn community theme, re-derived at this project's own lightness since the stock theme's lighter value fails contrast here. Used exclusively for interactive and functional elements — primary buttons, links, focus rings, active states. Never used decoratively.
+- **Graphite Ink** (`oklch(0.4891 0 0)`): plain dark gray, zero chroma — no hue at all. Used for primary buttons, links, and focus rings. Deliberately colorless: it's the "default ink" of the notebook, not a brand mark.
 
 ### Secondary
-- **Sandpaper Tan** (`oklch(0.9200 0.0651 74.3695)`): a lighter, warmer neutral-adjacent tone used for secondary buttons and low-emphasis accent surfaces where Burnt Umber would be too heavy.
+- **Slate Gray** (`oklch(0.9006 0 0)`): a lighter neutral step used for secondary buttons and low-emphasis surfaces, distinguished from Primary by lightness alone, not hue.
+
+### Accent (the one real color)
+- **Highlighter Cream** (`oklch(0.9354 0.0456 94.8549)` bg / `oklch(0.4015 0.0436 37.9587)` text): a pale warm cream with a warm-brown text pairing — the system's only non-neutral hue. Used for hover states on outline/ghost elements and Nextra's docs-chrome wayfinding (sidebar active item, TOC active section, search highlight). Reads as a highlighter pass across the page, not a brand color.
 
 ### Neutral
 - **Paper White** (`oklch(0.9821 0 0)`): page background.
-- **Page White** (`oklch(0.9911 0 0)`): card, popover, and other raised-surface background — very slightly lighter than the page itself.
-- **Ink Charcoal** (`oklch(0.2435 0 0)`): primary text color, on both page and card surfaces.
-- **Soft Gray** (`oklch(0.9521 0 0)`): muted backgrounds (e.g. subtle section fills).
-- **Pencil Gray** (`oklch(0.5032 0 0)`): secondary/muted text — captions, metadata, de-emphasized copy.
-- **Margin Gray** (`oklch(0.9310 0 0)`): accent-neutral background for hover/active states on non-primary elements.
-- **Hairline Gray** (`oklch(0.8822 0 0)`): borders, dividers, input outlines. Always thin (1px), never heavy.
+- **Page White** (`oklch(1.0000 0 0)`): card, popover, and other raised-surface background.
+- **Ink Gray** (`oklch(0.3485 0 0)`): primary text color, on both page and card surfaces.
+- **Soft Gray** (`oklch(0.9158 0 0)`): muted backgrounds (e.g. subtle section fills).
+- **Pencil Gray** (`oklch(0.4313 0 0)`): secondary/muted text — captions, metadata, de-emphasized copy.
+- **Hairline Gray** (`oklch(0.5538 0.0025 17.2320)`): borders, dividers, input outlines — notably more visible than the near-invisible hairline this project used before, closer to an actual ruled notebook line.
 
 ### Functional
-- **Alert Red** (`oklch(0.6271 0.1936 33.3390)`): destructive/error states only (form validation, delete actions). Not part of the brand palette — reserved strictly for system feedback.
-- **Passive confirmations (success banners, status messages) use neutral tones, not Burnt Umber.** The accent is reserved for interactive/functional elements per the One Voice Rule; a success message isn't one. Error gets its own dedicated hue because it demands attention — success doesn't need to compete for it.
+- **Alert Red** (`oklch(0.5200 0.2090 20.0041)`): destructive/error states only (form validation, delete actions). Darkened from the stock "Notebook" theme's value, which failed WCAG AA (~3.1-3.2:1) as both error text and white-on-red button fill. Not part of the brand palette — reserved strictly for system feedback.
+- **Passive confirmations (success banners, status messages) use neutral tones, not the accent.** The accent is reserved for hover/wayfinding per the One Voice Rule; a success message isn't one. Error gets its own dedicated hue because it demands attention — success doesn't need to compete for it.
 
 ### Named Rules
-**The One Voice Rule.** Burnt Umber is the only non-neutral color in the system. It appears on a small minority of any given screen — a button, a link, a ring — and its rarity is what makes it read as a signal instead of decoration. A second accent hue is never introduced without retiring this rule deliberately.
+**The One Voice Rule.** Highlighter Cream is the only non-neutral color in the system — not Primary, which is deliberately plain gray. It appears on a small minority of any given screen (a hover state, an active sidebar item) and its rarity is what makes it read as a signal instead of decoration. A second accent hue is never introduced without retiring this rule deliberately.
 
 ## Typography
 
@@ -149,7 +151,7 @@ Flat by default. Surfaces sit flush with the page at rest — there is no ambien
 - **Outline-button edge** (`shadow-xs`): fainter still; exists only so an outline button reads as a surface, not just a border.
 
 ### Named Rules
-**The Flat-at-Rest Rule.** Nothing is elevated by default. A shadow's presence always means "this is a distinct surface," never "this is important" — importance is carried by the Burnt Umber accent, not by lift.
+**The Flat-at-Rest Rule.** Nothing is elevated by default. A shadow's presence always means "this is a distinct surface," never "this is important" — importance is carried by the Highlighter Cream accent, not by lift.
 
 ## Shapes
 
@@ -158,17 +160,17 @@ Corners are moderate and consistent rather than sharp or pill-shaped by default:
 ## Components
 
 ### Buttons
-- **Shape:** `rounded-md` (0.5rem), height `2.25rem` (default size), `0.5rem 1rem` padding.
-- **Primary:** Burnt Umber background, white text; hover darkens to 90% opacity.
-- **Secondary:** Sandpaper Tan background, its paired dark-brown foreground text; hover to 80% opacity.
-- **Outline:** transparent/page background, hairline border, `shadow-xs`; hover fills with Margin Gray.
-- **Ghost:** no background or border at rest; hover fills with Margin Gray.
-- **Link:** Burnt Umber text, underline only on hover.
+- **Shape:** `rounded-md` (0.5rem), height `2.75rem` (`lg`, 44px — the touch-target floor), `0.5rem 1rem` padding.
+- **Primary:** Graphite Ink background, light gray text; hover lightens slightly.
+- **Secondary:** Slate Gray background, Ink Gray text; hover darkens slightly.
+- **Outline:** transparent/page background, hairline border, `shadow-xs`; hover fills with Highlighter Cream.
+- **Ghost:** no background or border at rest; hover fills with Highlighter Cream.
+- **Link:** Graphite Ink text, underline only on hover.
 - **Focus:** a 3px `ring-ring/50` ring plus a solid focus border — visible, never suppressed.
 
 ### Chips / Tags
 - **Style:** pill-shaped (`rounded-full`), `0.125rem 0.5rem` padding, small (`text-xs`) JetBrains Mono type.
-- **Use:** project category badges and tech-stack tags (rendered in the Nextra TOC sidebar on project pages) — always Burnt Umber default or a neutral outline variant, never a rainbow of category colors.
+- **Use:** project category badges and tech-stack tags (rendered in the Nextra TOC sidebar on project pages) — always Graphite Ink default or a neutral outline variant, never a rainbow of category colors.
 
 ### Cards / Containers
 - **Corner Style:** `rounded-xl` (0.75rem).
@@ -185,18 +187,18 @@ Corners are moderate and consistent rather than sharp or pill-shaped by default:
 - **Style:** Nextra's default navbar, restyled to the neutral palette (background/border tokens), sitting above the custom `StatusLine` strip (mono, muted-foreground, no border, 32px tall, present on every page).
 
 ### Particle Sphere (signature component)
-The hero's WebGL particle field is the system's one sanctioned decorative element. ~1,400 randomized points on a thin spherical shell, rendered as soft dots in Ink Charcoal, gently rotating; it trails the cursor via a damped spring and displaces outward along independent random vectors as a continuous function of scroll speed, easing back to rest as scrolling slows. It is `aria-hidden` and fully skipped under `prefers-reduced-motion` (renders one static frame instead of animating) — the one place atmosphere is allowed to outrank restraint, and only because it was chosen deliberately as the site's signature rather than defaulted into.
+The hero's WebGL particle field is the system's one sanctioned decorative element. ~1,400 randomized points on a thin spherical shell, rendered as soft dots in Ink Gray, gently rotating; it trails the cursor via a damped spring and displaces outward along independent random vectors as a continuous function of scroll speed, easing back to rest as scrolling slows. It is `aria-hidden` and fully skipped under `prefers-reduced-motion` (renders one static frame instead of animating) — the one place atmosphere is allowed to outrank restraint, and only because it was chosen deliberately as the site's signature rather than defaulted into.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** keep Burnt Umber reserved for interactive/functional elements only — buttons, links, focus rings, active states.
+- **Do** keep Highlighter Cream reserved for hover/wayfinding states only — never a primary button fill.
 - **Do** set every verifiable fact (stats, dates, tags, code) in JetBrains Mono; keep it out of prose and headings.
 - **Do** keep surfaces flat at rest; let `shadow-sm`/`shadow-xs` mark a boundary, never a lift.
 - **Do** route every new animated element through `prefers-reduced-motion`, exactly like the hero sphere and marquee already do.
 
 ### Don't:
-- **Don't** introduce a second brand accent hue — Alert Red is functional-only and must stay that way.
+- **Don't** introduce a second non-neutral hue beyond the accent — Alert Red is functional-only and must stay that way.
 - **Don't** add gradients, glassmorphism, or heavy card shadows — they read as generic-portfolio, which this system is deliberately built to avoid.
 - **Don't** use JetBrains Mono for narrative copy, or Montserrat below the heading level — each font's role is a trust signal, not just a style choice.
 - **Don't** add a second atmospheric/decorative motion element without deliberately retiring the "one signature" rule the particle sphere currently holds alone.

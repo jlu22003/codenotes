@@ -92,12 +92,50 @@ export default async function RootLayout({ children }: {
     >
       <Head
         color={{
-          hue: 44,        // Brown/yellow hue (matches your primary color)
-          saturation: 40, // 40% saturation
-          lightness: {
-            light: 43,    // 43% lightness for light mode
-            dark: 65      // 65% lightness for dark mode
-          }
+          // DESIGN.md names Highlighter Cream (the accent role), not the
+          // achromatic primary, as the color for Nextra's own docs chrome —
+          // "sidebar active item, TOC active section, search highlight."
+          // Nextra doesn't just paint this hue flat: it generates an entire
+          // primary-50..primary-950 TINT SCALE from these three values via
+          // calc(lightness ± offset), used for both text (darker tints)
+          // and background fills (lighter tints). An earlier attempt set
+          // light-mode lightness to 87% — matching the accent's own
+          // background-surface lightness directly — which works for a
+          // flat fill but breaks the tint scale: every lighter tint
+          // (primary-50/100/200/400, used for background fills like the
+          // sidebar active-item pill) overflowed past 100% and clamped to
+          // pure white, while the text tints rendered as unreadably pale
+          // cream — measured 1.14-1.47:1 contrast in multiple places
+          // (sidebar active item, TOC active links, MDX body prose links),
+          // all catastrophic WCAG failures. Fixed by using the accent-
+          // foreground token's hue/saturation (oklch(0.4015 0.0436
+          // 37.9587), the color DESIGN.md actually specifies for text-on-
+          // accent) at a mid-range lightness close to Nextra's own built-
+          // in default (its schema default is 45% light / 55% dark) so
+          // the generated scale stays within 0-100% at every tint and
+          // produces a readable text color plus a genuinely tinted (not
+          // clamped-white) background fill. Verified: text-primary-800 on
+          // bg-primary-100 (sidebar active item) = 7.26:1; text-primary-
+          // 600 on page background (TOC links, prose links) = 4.84:1.
+          // Dark mode is untouched — its achromatic value (hue:0, sat:0)
+          // was independently confirmed working correctly in both
+          // contrast and rendering by three separate review passes.
+          hue: { light: 14, dark: 0 },
+          saturation: { light: 26, dark: 0 },
+          lightness: { light: 45, dark: 88 }
+        }}
+        backgroundColor={{
+          // A separate prop from `color` above — drives Nextra's own
+          // --nextra-bg variable, used by the sidebar footer (theme
+          // switcher + collapse-sidebar icon), the theme-switcher dropdown
+          // panel, and the search results panel. Left unset, it defaults
+          // to Nextra's stock rgb(250,250,250)/rgb(17,17,17) — close
+          // enough to the real --background token in light mode to be
+          // invisible, but badly mismatched in dark mode (real dark
+          // --background is rgb(43,43,43), not rgb(17,17,17)), producing
+          // a visibly contrasting box behind those controls.
+          light: "rgb(249,249,249)",
+          dark: "rgb(43,43,43)",
         }}
       />
       {/* Your additional tags should be passed as `children` of `<Head>` element */}

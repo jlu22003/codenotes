@@ -55,20 +55,11 @@ export default function ResumeDownloadButton() {
   return (
     <div
       className={cn(
-        "fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 z-50 group transition-opacity duration-300",
+        "fixed bottom-4 right-4 sm:bottom-6 sm:right-6 md:bottom-8 md:right-8 z-50 transition-opacity duration-300",
         hidden ? "opacity-0 pointer-events-none" : "opacity-100"
       )}
       aria-hidden={hidden}
     >
-      {/* Tooltip */}
-      <div className="absolute bottom-full right-0 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
-        <div className="bg-foreground text-background text-sm font-medium px-3 py-1.5 rounded-md whitespace-nowrap shadow-lg">
-          Download Resume
-          {/* Arrow pointing down */}
-          <div className="absolute top-full right-4 -mt-1 border-4 border-transparent border-t-foreground"></div>
-        </div>
-      </div>
-
       {/* Button — outline, not the filled/primary treatment, so this
           persistently-floating convenience action never competes with
           whatever the page's actual primary CTA is at any given scroll

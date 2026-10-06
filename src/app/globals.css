@@ -2,81 +2,58 @@
 @import "nextra-theme-docs/style.css";
 @import "tw-animate-css";
 
-/* Define our own color system with clear differentiation */
+/* "Notebook" theme (tweakcn.com/r/themes/notebook) — a near-achromatic
+   primary (plain dark/light gray, no hue at all) with the only warmth
+   living in the accent role (hover states, sidebar highlight) and a
+   muted coral-red for errors. Colors only — this project keeps its own
+   established type system (Montserrat/Roboto/JetBrains Mono), not the
+   stock theme's handwriting font (Architects Daughter) and Fira Code. */
 :root {
-  /* Light mode - Clear visual hierarchy */
   --background: oklch(0.9821 0 0);
-  --foreground: oklch(0.2435 0 0);
-  --card: oklch(0.9911 0 0);
-  --card-foreground: oklch(0.2435 0 0);
-  --popover: oklch(0.9911 0 0);
-  --popover-foreground: oklch(0.2435 0 0);
-  /* Richer accent refresh (same lightness as before — contrast unaffected,
-     actually improves slightly), hue nudged from 42 to 44.36 and chroma
-     nearly doubled from 0.0392 to 0.075. Inspired by the "Mocha Mousse"
-     shadcn community theme's hue family, re-derived at this project's own
-     lightness so it still passes contrast as both text (7.8-8.0:1) and a
-     button fill with white text (8.2:1) — the stock theme's own lighter
-     value (L=0.61) fails both of those at ~3.7-3.9:1. */
-  --primary: oklch(0.4341 0.0750 44.3600);
-  --primary-foreground: oklch(1.0000 0 0);
-  --secondary: oklch(0.9200 0.0651 74.3695);
-  --secondary-foreground: oklch(0.3499 0.0685 40.8288);
-  --muted: oklch(0.9521 0 0);
-  --muted-foreground: oklch(0.5032 0 0);
-  --accent: oklch(0.9310 0 0);
-  --accent-foreground: oklch(0.2435 0 0);
-  /* Darkened from the original oklch(0.6271 0.1936 33.3390) — that value
-     failed WCAG AA (~3.7:1) for destructive/error text on this light-mode
-     background. This lightness is the darkest in-gamut point at this hue
-     that clears 4.5:1 against every real usage (plain background, card,
-     and the destructive/10-tinted error banner). Dark mode's own value is
-     unchanged — it already passes AA there. */
-  --destructive: oklch(0.5000 0.1800 33.3390);
+  --foreground: oklch(0.3485 0 0);
+  --card: oklch(1.0000 0 0);
+  --card-foreground: oklch(0.3485 0 0);
+  --popover: oklch(1.0000 0 0);
+  --popover-foreground: oklch(0.3485 0 0);
+  --primary: oklch(0.4891 0 0);
+  --primary-foreground: oklch(0.9551 0 0);
+  --secondary: oklch(0.9006 0 0);
+  --secondary-foreground: oklch(0.3485 0 0);
+  --muted: oklch(0.9158 0 0);
+  --muted-foreground: oklch(0.4313 0 0);
+  --accent: oklch(0.9354 0.0456 94.8549);
+  --accent-foreground: oklch(0.4015 0.0436 37.9587);
+  /* Darkened from the stock theme's oklch(0.6627 0.0978 20.0041) — that
+     value failed WCAG AA both as error text (~3.1:1) and as white-on-red
+     button/badge fill (~3.2:1). This lightness clears 4.5:1+ on every real
+     usage while keeping the same hue. */
+  --destructive: oklch(0.5200 0.2090 20.0041);
   --destructive-foreground: oklch(1.0000 0 0);
-  --border: oklch(0.8822 0 0);
-  --input: oklch(0.8822 0 0);
-  --ring: oklch(0.4341 0.0750 44.3600);
+  --border: oklch(0.5538 0.0025 17.2320);
+  --input: oklch(1.0000 0 0);
+  --ring: oklch(0.7058 0 0);
 }
 
-/* Dark mode with strong contrast */
 .dark {
-  --background: oklch(0.1776 0 0);
-  --foreground: oklch(0.9491 0 0);
-  --card: oklch(0.2134 0 0);
-  --card-foreground: oklch(0.9491 0 0);
-  --popover: oklch(0.2134 0 0);
-  --popover-foreground: oklch(0.9491 0 0);
-  /* Rotated to match light mode's refreshed accent hue (44.36, was 66.17) so
-     the brand color reads as the same hue family across themes, not a
-     different one. Lightness nudged down slightly (0.9247->0.90) because
-     the old chroma (0.0524) clips out of gamut at this hue at the original
-     lightness; 0.90 is the highest lightness that keeps a comparable
-     chroma (0.055) fully in gamut. Contrast stays excellent either way
-     (12.85-13.8:1). primary-foreground was an unrelated stray cyan hue
-     (200deg) with negligible chroma (0.024) — simplified to a plain
-     neutral matching this theme's own near-black background, since the
-     original hue connected to nothing else in the palette. */
-  --primary: oklch(0.9000 0.0550 44.3600);
-  --primary-foreground: oklch(0.1776 0 0);
-  --secondary: oklch(0.3163 0.0190 63.6992);
-  --secondary-foreground: oklch(0.9000 0.0550 44.3600);
-  --muted: oklch(0.2520 0 0);
-  --muted-foreground: oklch(0.7699 0 0);
-  --accent: oklch(0.2850 0 0);
-  --accent-foreground: oklch(0.9491 0 0);
-  --destructive: oklch(0.6271 0.1936 33.3390);
-  /* Dark, not white — this red has to stay light enough for destructive
-     *text* to read against the dark page background (4.89:1, passing),
-     which leaves white-on-this-red at only 3.87:1 (failing AA). Dark text
-     on the same red measures 4.89:1, so it's the foreground that flips
-     between themes, not the red itself. (Currently unused live — no
-     destructive button/badge variant is invoked anywhere on the site —
-     but worth being correct rather than leaving a landmine.) */
-  --destructive-foreground: oklch(0.1776 0 0);
-  --border: oklch(0.2351 0.0115 91.7467);
-  --input: oklch(0.4017 0 0);
-  --ring: oklch(0.9000 0.0550 44.3600);
+  --background: oklch(0.2891 0 0);
+  --foreground: oklch(0.8945 0 0);
+  --card: oklch(0.3211 0 0);
+  --card-foreground: oklch(0.8945 0 0);
+  --popover: oklch(0.3211 0 0);
+  --popover-foreground: oklch(0.8945 0 0);
+  --primary: oklch(0.7572 0 0);
+  --primary-foreground: oklch(0.2891 0 0);
+  --secondary: oklch(0.4676 0 0);
+  --secondary-foreground: oklch(0.8078 0 0);
+  --muted: oklch(0.3904 0 0);
+  --muted-foreground: oklch(0.7058 0 0);
+  --accent: oklch(0.9067 0 0);
+  --accent-foreground: oklch(0.3211 0 0);
+  --destructive: oklch(0.7915 0.0491 18.2410);
+  --destructive-foreground: oklch(0.2891 0 0);
+  --border: oklch(0.4276 0 0);
+  --input: oklch(0.3211 0 0);
+  --ring: oklch(0.8078 0 0);
 }
 
 /* Map to Tailwind color utilities */
@@ -127,12 +104,54 @@
     @apply bg-background text-foreground;
     font-family: var(--font-roboto), system-ui, -apple-system, sans-serif;
   }
+
+  /* Text selection reuses the accent — DESIGN.md's own "highlighter pass"
+     language for that role is literally what selecting text is. Otherwise
+     this is the one browser surface left at its OS default, unthemed. */
+  ::selection {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
   
   /* Apply Montserrat to all headings */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-montserrat), system-ui, -apple-system, sans-serif;
     font-weight: 700;
     letter-spacing: -0.02em;
+  }
+
+  /* Nextra's own heading/breadcrumb components hardcode Tailwind's stock
+     slate-900/slate-100 and gray-600/gray-400 instead of the project's
+     OKLCH --foreground/--muted-foreground tokens — baked into Nextra's
+     component internals, not passed-through props, so it can't be
+     stripped at the MDX-component level. !important is deliberate here:
+     this is a one-directional override of vendor CSS this project doesn't
+     control, not a fight with its own styles. */
+  /* Scoped to [class*="x:text-"] — Nextra prefixes every utility class it
+     generates with "x:" (confirmed: its own heading markup carries
+     "x:text-slate-900 x:dark:text-slate-100"), so this positively matches
+     only Nextra's own unstyled-default headings, not project-authored
+     ones. An earlier, broader version of this rule (any heading inside
+     <article>, no qualifier) silently clobbered LatestBlog's deliberate
+     text-accent-foreground dark-mode fix, because the homepage's MDX
+     shell wraps hand-written React components in the same <article>
+     element as actual Nextra-authored prose — there was no way to tell
+     them apart without checking for Nextra's own class signature. */
+  article h1[class*="x:text-"],
+  article h2[class*="x:text-"],
+  article h3[class*="x:text-"],
+  article h4[class*="x:text-"],
+  article h5[class*="x:text-"],
+  article h6[class*="x:text-"] {
+    color: var(--foreground) !important;
+  }
+
+  article {
+    color: var(--foreground) !important;
+  }
+
+  .nextra-breadcrumb {
+    color: var(--muted-foreground) !important;
   }
   
   /* Specific heading styles for better hierarchy */
@@ -158,6 +177,49 @@
   .nextra-sidebar-container {
     background-color: var(--background);
     border-right-color: var(--border);
+  }
+
+  /* Navbar logo and social icon links render well under the project's own
+     44px touch-target floor (13x24 and 16x16 — Nextra's own markup, not
+     ours). Padding brings them to the floor without growing the visible
+     glyph; the hover fill reuses the same ghost-button treatment the rest
+     of the site already uses, so the larger hit area reads as intentional
+     rather than as unexplained empty space around a tiny icon. */
+  .nextra-navbar a[aria-label="Home page"],
+  .nextra-navbar a[href^="https://github.com/"],
+  .nextra-navbar a[href^="https://www.linkedin.com/"] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    border-radius: var(--radius-md);
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .nextra-navbar a[aria-label="Home page"]:hover,
+  .nextra-navbar a[href^="https://github.com/"]:hover,
+  .nextra-navbar a[href^="https://www.linkedin.com/"]:hover {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  /* Mobile sidebar-toggle hamburger (the one control a mobile visitor must
+     tap to reach any navigation on docs-chrome pages) renders at 24x24 —
+     same gap, same fix as the navbar icons above. */
+  .nextra-hamburger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    border-radius: var(--radius-md);
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .nextra-hamburger:hover {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
   }
 }
 

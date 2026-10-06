@@ -43,18 +43,23 @@ const LatestBlog = async ({
   return (
     <section className={cn("py-24", className)} aria-labelledby="latest-blog-heading">
       <div className="container mx-auto max-w-7xl px-8">
-        <div className="rounded-xl bg-accent px-8 py-12 md:px-12 md:py-16">
+        {/* Light mode keeps the solid cream fill (a genuine highlight
+            against a bright page); dark mode swaps to the same card
+            treatment Focus/Contact already use (bg-card, border-border/60,
+            shadow-sm) instead of reusing the near-white accent fill, which
+            read as a glaring bright block against the rest of a dark page. */}
+        <div className="rounded-xl bg-accent px-8 py-12 dark:border dark:border-border/60 dark:bg-card dark:shadow-sm md:px-12 md:py-16">
           <div className="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
             {/* Text */}
             <div className="max-w-2xl">
               <h2
                 id="latest-blog-heading"
-                className="text-3xl md:text-4xl text-foreground mb-4"
+                className="text-3xl md:text-4xl text-accent-foreground dark:text-foreground mb-4"
               >
                 {heading}
               </h2>
-              <p className="text-lg text-muted-foreground">
-                <span className="font-medium text-foreground">{title}</span>
+              <p className="text-lg text-accent-foreground/70 dark:text-muted-foreground">
+                <span className="font-medium text-accent-foreground dark:text-foreground">{title}</span>
                 {date && <> — {date}</>}
               </p>
             </div>

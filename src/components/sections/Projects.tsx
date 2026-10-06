@@ -128,6 +128,7 @@ const Projects = ({
                         fill
                         sizes="(min-width: 768px) 452px, 100vw"
                         className="h-full w-full object-cover object-center"
+                        priority={index === 0}
                       />
                     </div>
                     {isPlaceholder && (
@@ -151,7 +152,7 @@ const Projects = ({
                     <p className="mb-6 text-sm md:text-base text-muted-foreground line-clamp-2">
                       {item.summary}
                     </p>
-                    <div className="inline-flex items-center text-sm font-medium">
+                    <div className="inline-flex items-center text-sm font-medium text-foreground">
                       <span>Read more</span>
                       <ArrowRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
                     </div>

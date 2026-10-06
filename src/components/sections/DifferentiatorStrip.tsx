@@ -1,7 +1,9 @@
 // components/sections/DifferentiatorStrip.tsx
 // A compact, real-numbers signal of the production-support half of the
-// identity, placed right after Hero so it doesn't depend on scroll depth to
-// be seen (the fuller story still lives in Focus's stats card).
+// identity, placed right after Hero. Hero is deliberately full-viewport
+// (100dvh, the site's one Experience-mode entrance), so this strip sits
+// just below the first fold rather than in it — the fuller story lives in
+// Focus & Philosophy's three cards.
 export default function DifferentiatorStrip() {
   return (
     <div className="border-y border-border/60 bg-card/50">

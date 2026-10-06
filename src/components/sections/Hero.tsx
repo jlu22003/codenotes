@@ -32,7 +32,7 @@ export default function Hero() {
       {/* Content */}
       <div className="relative z-10 container mx-auto max-w-7xl px-8 pb-20 md:pb-32">
         <div className="max-w-4xl">
-          <h1 className="text-4xl sm:text-6xl md:text-8xl mb-4 leading-tight whitespace-nowrap">
+          <h1 className="text-4xl sm:text-6xl md:text-8xl mb-4 leading-tight whitespace-nowrap text-foreground">
             Justin K. Lu
           </h1>
 
@@ -43,9 +43,15 @@ export default function Hero() {
             <Button
               asChild
               size="lg"
-              className="min-h-12 px-8 text-lg"
+              // Default primary hover (bg-primary/90) only nudges opacity
+              // 10% — barely perceptible as a state change. Scoped here
+              // rather than in the shared Button component since this is
+              // the one primary CTA sitting directly over the busiest part
+              // of the particle-sphere background, where a subtle shift is
+              // hardest to notice.
+              className="min-h-12 px-8 text-lg hover:bg-primary/75"
             >
-              <Link href="/projects/wip">View Work</Link>
+              <Link href="#projects">View Work</Link>
             </Button>
 
             <Button

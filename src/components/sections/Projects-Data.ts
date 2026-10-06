@@ -26,6 +26,15 @@ export const projects: Project[] = [
     category: "Client Project",
   },
   {
+    id: "boycott-1902",
+    title: "Boycott 1902",
+    summary:
+      "Took ownership of an in-progress WordPress project as a contractor, maintaining site stability and managing delivery independently.",
+    url: "/projects/boycott1902",
+    image: "/images/projects/boycott1902.png",
+    category: "Client Project",
+  },
+  {
     id: "maskimum-carnage",
     title: "Maskimum Carnage",
     summary:
@@ -41,15 +50,6 @@ export const projects: Project[] = [
       "Designed and shipped a client website end-to-end in WordPress, from stakeholder requirements to full ownership transition.",
     url: "/projects/equaljusticestudios",
     image: PLACEHOLDER_IMAGE,
-    category: "Client Project",
-  },
-  {
-    id: "boycott-1902",
-    title: "Boycott 1902",
-    summary:
-      "Took ownership of an in-progress WordPress project as a contractor, maintaining site stability and managing delivery independently.",
-    url: "/projects/boycott1902",
-    image: "/images/projects/boycott1902.png",
     category: "Client Project",
   },
   {
