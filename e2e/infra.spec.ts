@@ -64,3 +64,38 @@ test.describe('content source', () => {
     expect(latestPost?.date).toMatch(/^\d{4}-\d{2}-\d{2}$/)
   })
 })
+
+test.describe('fake resend', () => {
+  test('site sends through the fake, never the real API', { tag: '@functional' }, async ({ request }, testInfo) => {
+    const name = `Infra ${testInfo.testId}-${testInfo.repeatEachIndex}`
+    const response = await request.post('/api/contact', {
+      data: { name, email: 'infra@example.com', message: 'hello' },
+    })
+    expect(response.status()).toBe(200)
+
+    const sent = await (await request.get(`http://localhost:3201/__sent?match=${encodeURIComponent(name)}`)).json()
+    expect(sent).toHaveLength(1)
+    expect(sent[0].subject).toBe(`Portfolio Contact from ${name}`)
+  })
+
+  // Hits the fake server's /emails endpoint directly, the way the Resend SDK does, rather than
+  // through /api/contact: the route never inspects resend.emails.send()'s return value (it
+  // ignores the SDK's { error } shape, see Task 13 bug #6), so a response forwarded through the
+  // site would always read back 200 regardless of the fake's matching logic.
+  test('returns a queued response only to the matching sender', { tag: '@functional' }, async ({ request }, testInfo) => {
+    const name = `Queued ${testInfo.testId}-${testInfo.repeatEachIndex}`
+    await request.post('http://localhost:3201/__next', {
+      data: { match: name, status: 422, body: { name: 'validation_error', message: 'bad', statusCode: 422 } },
+    })
+
+    const other = await request.post('http://localhost:3201/emails', {
+      data: { subject: `Portfolio Contact from Other ${testInfo.testId}-${testInfo.repeatEachIndex}` },
+    })
+    expect(other.status()).toBe(200)
+
+    const matching = await request.post('http://localhost:3201/emails', {
+      data: { subject: `Portfolio Contact from ${name}` },
+    })
+    expect(matching.status()).toBe(422)
+  })
+})

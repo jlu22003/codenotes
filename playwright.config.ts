@@ -27,11 +27,25 @@ export default defineConfig({
     { name: 'firefox', use: { ...devices['Desktop Firefox'] } },
     { name: 'webkit', use: { ...devices['Desktop Safari'] } },
   ],
-  webServer: {
-    command: `npm run build && npx next start -p ${PORT}`,
-    url: baseURL,
-    reuseExistingServer: false,
-    timeout: 300_000,
-    env: { TZ: 'America/New_York' },
-  },
+  webServer: [
+    {
+      command: 'node e2e/fake-resend.mjs',
+      url: 'http://localhost:3201',
+      reuseExistingServer: false,
+    },
+    {
+      command: `npm run build && npx next start -p ${PORT}`,
+      url: baseURL,
+      // Never reuse: a server started outside Playwright could be holding the
+      // real RESEND_API_KEY from .env.local and send real email.
+      reuseExistingServer: false,
+      timeout: 300_000,
+      // Real environment variables win over .env.local in Next.js.
+      env: {
+        RESEND_BASE_URL: 'http://localhost:3201',
+        RESEND_API_KEY: 're_fake_e2e',
+        TZ: 'America/New_York',
+      },
+    },
+  ],
 })
