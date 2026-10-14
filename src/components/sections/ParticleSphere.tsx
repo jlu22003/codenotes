@@ -201,6 +201,20 @@ export default function ParticleSphere({
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
+    // The dot color above was resolved once at mount time. If the theme
+    // changes afterward (the <html> element's "dark" class, toggled by
+    // next-themes) the resolved color goes stale — re-resolve and repaint
+    // whenever that class changes.
+    const applyThemeColor = () => {
+      material.color.set(resolveCssColor("--foreground", "#3a3a3a"));
+      if (prefersReducedMotion) renderer.render(scene, camera);
+    };
+    const themeObserver = new MutationObserver(applyThemeColor);
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
     // Target values come straight from the cursor; the tick loop springs
     // toward them each frame so the sphere trails smoothly — and slightly
     // overshoots past the target before settling — instead of snapping to
@@ -296,6 +310,7 @@ export default function ParticleSphere({
     return () => {
       if (frameId) cancelAnimationFrame(frameId);
       window.removeEventListener("pointermove", handlePointerMove);
+      themeObserver.disconnect();
       resizeObserver.disconnect();
       geometry.dispose();
       material.dispose();
