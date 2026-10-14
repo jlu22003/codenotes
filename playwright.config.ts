@@ -1,6 +1,7 @@
 import { defineConfig, devices } from '@playwright/test'
 
-const PORT = 3100
+const PORT = Number(process.env.E2E_PORT ?? 3100)
+const RESEND_PORT = Number(process.env.E2E_RESEND_PORT ?? 3201)
 const baseURL = `http://localhost:${PORT}`
 
 export default defineConfig({
@@ -30,8 +31,9 @@ export default defineConfig({
   webServer: [
     {
       command: 'node e2e/fake-resend.mjs',
-      url: 'http://localhost:3201',
+      url: `http://localhost:${RESEND_PORT}`,
       reuseExistingServer: false,
+      env: { E2E_RESEND_PORT: String(RESEND_PORT) },
     },
     {
       command: `npm run build && npx next start -p ${PORT}`,
@@ -42,7 +44,7 @@ export default defineConfig({
       timeout: 300_000,
       // Real environment variables win over .env.local in Next.js.
       env: {
-        RESEND_BASE_URL: 'http://localhost:3201',
+        RESEND_BASE_URL: `http://localhost:${RESEND_PORT}`,
         RESEND_API_KEY: 're_fake_e2e',
         TZ: 'America/New_York',
       },

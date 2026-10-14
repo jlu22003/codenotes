@@ -1,4 +1,4 @@
-import { test, expect, PIXEL } from './fixtures'
+import { test, expect, PIXEL, FAKE_RESEND } from './fixtures'
 import { execSync } from 'node:child_process'
 import { latestPost, pages, routes, sidebarTitles } from './content'
 
@@ -74,7 +74,7 @@ test.describe('fake resend', () => {
     })
     expect(response.status()).toBe(200)
 
-    const sent = await (await request.get(`http://localhost:3201/__sent?match=${encodeURIComponent(name)}`)).json()
+    const sent = await (await request.get(`${FAKE_RESEND}/__sent?match=${encodeURIComponent(name)}`)).json()
     expect(sent).toHaveLength(1)
     expect(sent[0].subject).toBe(`Portfolio Contact from ${name}`)
   })
@@ -85,16 +85,16 @@ test.describe('fake resend', () => {
   // site would always read back 200 regardless of the fake's matching logic.
   test('returns a queued response only to the matching sender', { tag: '@functional' }, async ({ request }, testInfo) => {
     const name = `Queued ${testInfo.testId}-${testInfo.repeatEachIndex}`
-    await request.post('http://localhost:3201/__next', {
+    await request.post(`${FAKE_RESEND}/__next`, {
       data: { match: name, status: 422, body: { name: 'validation_error', message: 'bad', statusCode: 422 } },
     })
 
-    const other = await request.post('http://localhost:3201/emails', {
+    const other = await request.post(`${FAKE_RESEND}/emails`, {
       data: { subject: `Portfolio Contact from Other ${testInfo.testId}-${testInfo.repeatEachIndex}` },
     })
     expect(other.status()).toBe(200)
 
-    const matching = await request.post('http://localhost:3201/emails', {
+    const matching = await request.post(`${FAKE_RESEND}/emails`, {
       data: { subject: `Portfolio Contact from ${name}` },
     })
     expect(matching.status()).toBe(422)
