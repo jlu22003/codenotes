@@ -147,18 +147,20 @@ test.describe('hero particle sphere', () => {
   // MINIMUM_SHARE sits between the broken and healthy values, closer to the
   // broken one so a real (not just marginal) recolor failure trips it.
   //
-  // Firefox and WebKit were measured too (same methodology) and don't carry
-  // the same separation: WebKit's "switched" share (~0.0105) sits close to
-  // its own "dark" share (~0.0136) — only ~23% lower, vs chromium's ~36%
-  // drop — so a single fixed minimum can't reliably fail the bug on WebKit
-  // without also failing the already-correct fresh-light case on chromium.
-  // This is engine-specific WebGL/canvas anti-aliasing variance, not part of
-  // the bug under test, so this test is scoped to chromium only.
+  // Firefox was measured too (same methodology) and separates the same way
+  // chromium does — switched ~0.0049 vs dark ~0.0077 / fresh-light ~0.0099 —
+  // so MINIMUM_SHARE=0.006 works there as well. WebKit doesn't: its
+  // "switched" share (~0.0105) sits close to its own "dark" share (~0.0136)
+  // — only ~23% lower, vs chromium/firefox's ~36-50% drop — so a single
+  // fixed minimum can't reliably fail the bug on WebKit without also failing
+  // the already-correct fresh-light case on chromium/firefox. This is
+  // engine-specific WebGL/canvas anti-aliasing variance, not part of the bug
+  // under test, so only WebKit is skipped.
   const THRESHOLD = 8
   const MINIMUM_SHARE = 0.006
 
   test('is visible in light theme', { tag: '@functional' }, async ({ page, browserName }) => {
-    test.skip(browserName !== 'chromium', 'threshold calibrated on chromium only — see comment above')
+    test.skip(browserName === 'webkit', 'threshold not reliable on WebKit — see comment above')
 
     async function measureVisibleShare() {
       await expect(page.locator('#particle-sphere-background canvas')).toBeVisible()
@@ -265,8 +267,10 @@ test.describe('hero particle sphere', () => {
       await expect(page.locator('#particle-sphere-background canvas')).toBeVisible()
       await page.locator('button[title="Change theme"]:visible').first().click()
       await page.getByRole('option', { name: 'Light' }).click()
-      await frames(page, 2) // let a theme-triggered re-render (post-fix) paint
-      expect(await measureVisibleShare()).toBeGreaterThanOrEqual(MINIMUM_SHARE)
+      // The MutationObserver callback (post-fix) and its render() call land
+      // asynchronously relative to the click; poll instead of a fixed frame
+      // count so this doesn't race the paint on slower/jittery runs.
+      await expect.poll(() => measureVisibleShare(), { timeout: 5_000 }).toBeGreaterThanOrEqual(MINIMUM_SHARE)
     })
   })
 })
