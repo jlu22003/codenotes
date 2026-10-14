@@ -1,5 +1,5 @@
 import { test, expect } from '../fixtures'
-import type { Locator, Page } from '@playwright/test'
+import type { Page } from '@playwright/test'
 
 const FIELDS = ['First Name', 'Last Name', 'Email', 'Message'] as const
 
@@ -12,32 +12,40 @@ async function countApiCalls(page: Page) {
   return calls
 }
 
-// The form is server-rendered before React hydrates it. A fill() that lands
-// in that window can be silently discarded when hydration mounts and resets
-// the controlled input back to its initial (empty) value — observed on
-// webkit, where the field touched first sometimes reads empty again by the
-// time of submit even though it read back correctly right after filling.
-// Retrying the fill itself isn't enough, since the reset can land *after*
-// that immediate read-back. So fill every field, then make a second pass
-// that re-fills anything hydration knocked back out once it's settled.
-async function safeFill(field: Locator, value: string) {
-  await expect(async () => {
-    await field.fill(value)
-    await expect(field).toHaveValue(value)
-  }).toPass()
-}
-
 async function fill(page: Page, values: Partial<Record<(typeof FIELDS)[number], string>>) {
-  const entries = Object.entries(values)
-  for (const [label, value] of entries) await safeFill(page.getByLabel(label, { exact: true }), value)
-  for (const [label, value] of entries) await safeFill(page.getByLabel(label, { exact: true }), value)
+  for (const [label, value] of Object.entries(values)) await page.getByLabel(label, { exact: true }).fill(value)
 }
 
 const valid = { 'First Name': 'Ada', 'Last Name': 'Lovelace', Email: 'ada@example.com', Message: 'Hello' }
 const submit = (page: Page) => page.getByRole('button', { name: 'Submit Contact Form' }).click()
 
+// The form is server-rendered before React hydrates it. Investigated (see
+// task-10-report.md): a write that lands in that window is NOT wiped by
+// hydration itself landing — but React's onChange for it can be missed
+// (the event fires before React's delegated listener attaches), leaving
+// React's state for that field at its initial "" even though the DOM still
+// shows the typed value. handleChange merges over that stale state
+// (`setFormData((prev) => ({...prev, [name]: value}))`), so the *next*
+// field's edit re-renders the whole form from it, forcing the controlled
+// input's DOM value back to "" and silently wiping what was typed. This is
+// a real product bug (reported BLOCKED), not a test artifact to retry
+// around. These tests check validation, not hydration, so avoid the window
+// entirely: wait for React to have actually attached to the DOM — a
+// deterministic signal, not a fixed delay — before any test touches the form.
+async function waitForHydratedForm(page: Page) {
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const el = document.getElementById('firstName')
+        return !!el && Object.keys(el).some((key) => key.startsWith('__reactProps$'))
+      }),
+    )
+    .toBe(true)
+}
+
 test.beforeEach(async ({ page }) => {
   await page.goto('/#contact-me')
+  await waitForHydratedForm(page)
 })
 
 // Next.js's App Router portals a hidden `role="alert"` live region onto
@@ -71,7 +79,7 @@ for (const email of ['a@b', 'a@b.', 'has space@x.com']) {
 
 test('message stops at 2000 characters', { tag: '@functional' }, async ({ page }) => {
   const message = page.getByLabel('Message', { exact: true })
-  await safeFill(message, 'x'.repeat(2000))
+  await message.fill('x'.repeat(2000))
   await message.press('x')
   await expect(message).toHaveValue('x'.repeat(2000))
 })
@@ -79,7 +87,7 @@ test('message stops at 2000 characters', { tag: '@functional' }, async ({ page }
 test('editing a field clears its error and the summary', { tag: '@functional' }, async ({ page }) => {
   await submit(page)
   const firstName = page.getByLabel('First Name', { exact: true })
-  await safeFill(firstName, 'Ada')
+  await firstName.fill('Ada')
   await expect(firstName).toHaveAttribute('aria-invalid', 'false')
   await expect(contactAlert(page)).toHaveCount(0)
 })
