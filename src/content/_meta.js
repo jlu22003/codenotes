@@ -6,11 +6,6 @@ const meta = {
   projects: {
     title: "Projects",
     type: "page",
-    // Without this, Nextra auto-derives the link from the first visible
-    // child in projects/_meta.js — since the real index.mdx is itself
-    // hidden from the sidebar listing, that was always some individual
-    // project page, never the actual "All Projects" index.
-    href: "/projects",
   },
   gallery: {
     display: "hidden",

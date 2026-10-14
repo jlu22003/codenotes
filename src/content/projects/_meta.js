@@ -1,6 +1,7 @@
 const meta = {
     index: {
-        display: 'hidden'
+        title: 'All Projects',
+        type: 'doc'
     },
     // Order matches the index page's own "All Projects" list — finished
     // work first, consistent with its deliberate finished-vs-in-progress

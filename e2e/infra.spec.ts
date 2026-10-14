@@ -56,7 +56,8 @@ test.describe('content source', () => {
   })
 
   test('lists sidebar titles in _meta.js order', { tag: '@functional' }, () => {
-    expect(sidebarTitles('projects')[0]).toBe('Laylo Cafe')
+    expect(sidebarTitles('projects')[0]).toBe('All Projects')
+    expect(sidebarTitles('projects')[1]).toBe('Laylo Cafe')
     expect(sidebarTitles('projects')).not.toContain(undefined)
   })
 

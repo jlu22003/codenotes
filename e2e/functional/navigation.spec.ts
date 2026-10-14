@@ -71,10 +71,15 @@ test('sidebar lists projects in _meta.js order', { tag: '@functional' }, async (
 test('pagination follows sidebar order', { tag: '@functional' }, async ({ page }) => {
   const [first, second] = sidebarTitles('projects')
   const route = (title: string) => pages.find((p) => p.title === title)!.route
+  // `first` is now the "All Projects" index page, whose own body already links to every
+  // project (including `second`) — so the pagination link isn't the only match on that
+  // page. Nextra's pagination component (nextra-theme-docs/dist/components/pagination.js)
+  // always renders last within the article and is the only match carrying a `title`
+  // attribute; `.last()` reliably picks it regardless of how many body links also match.
   await page.goto(route(first))
-  await expect(page.getByRole('article').getByRole('link', { name: second })).toHaveAttribute('href', route(second))
+  await expect(page.getByRole('article').getByRole('link', { name: second }).last()).toHaveAttribute('href', route(second))
   await page.goto(route(second))
-  await expect(page.getByRole('article').getByRole('link', { name: first })).toHaveAttribute('href', route(first))
+  await expect(page.getByRole('article').getByRole('link', { name: first }).last()).toHaveAttribute('href', route(first))
 })
 
 test('social links open externally with accessible names', { tag: '@functional' }, async ({ page }) => {
