@@ -24,7 +24,9 @@ export const test = base.extend<{ allowedErrors: RegExp[]; guard: void }>({
           return route.abort('blockedbyclient')
         },
       )
-      page.on('pageerror', (error) => errors.push(error.message))
+      page.on('pageerror', (error) => {
+        if (!allowedErrors.some((pattern) => pattern.test(error.message))) errors.push(error.message)
+      })
       page.on('console', (message) => {
         const text = message.text()
         // Failed HTTP statuses (404 pages, mocked 500s) are asserted by the tests themselves.

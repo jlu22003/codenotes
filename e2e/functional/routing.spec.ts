@@ -24,20 +24,31 @@ test('trailing slash resolves to the canonical route', { tag: '@functional' }, a
   await expect(page).toHaveURL('/projects')
 })
 
-test('every internal link resolves', { tag: '@functional' }, async ({ page, request }) => {
-  test.setTimeout(120_000)
-  const hrefs = new Set<string>()
-  for (const route of routes) {
-    await page.goto(route)
-    for (const href of await page.locator('a[href^="/"]').evaluateAll((links) => links.map((a) => a.getAttribute('href')!))) {
-      hrefs.add(href.split('#')[0])
+test.describe('internal link crawl', () => {
+  // Navigating away mid-crawl aborts Next.js's in-flight RSC prefetches; Firefox/WebKit
+  // surface that as either a console.error ("Failed to fetch RSC payload...") from Next's
+  // own catch block, or a pageerror whose .message WebKit truncates to
+  // "<url>?_rsc=... due to access control checks." (the full sentence, "Fetch API cannot
+  // load ... due to access control checks.", only shows up in .stack, not .message).
+  // Chromium shows neither. Both are the same benign abort; the router's fallback to a
+  // full browser navigation is correct behavior, not a site defect.
+  test.use({ allowedErrors: [/Failed to fetch RSC payload|due to access control checks/] })
+
+  test('every internal link resolves', { tag: '@functional' }, async ({ page, request }) => {
+    test.setTimeout(120_000)
+    const hrefs = new Set<string>()
+    for (const route of routes) {
+      await page.goto(route)
+      for (const href of await page.locator('a[href^="/"]').evaluateAll((links) => links.map((a) => a.getAttribute('href')!))) {
+        hrefs.add(href.split('#')[0])
+      }
     }
-  }
-  const broken: string[] = []
-  for (const href of hrefs) {
-    if ((await request.get(href)).status() >= 400) broken.push(href)
-  }
-  expect(broken).toEqual([])
+    const broken: string[] = []
+    for (const href of hrefs) {
+      if ((await request.get(href)).status() >= 400) broken.push(href)
+    }
+    expect(broken).toEqual([])
+  })
 })
 
 test('home has title and social metadata', { tag: '@functional' }, async ({ page }) => {
