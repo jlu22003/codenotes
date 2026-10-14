@@ -31,8 +31,9 @@ test.describe('internal link crawl', () => {
   // "<url>?_rsc=... due to access control checks." (the full sentence, "Fetch API cannot
   // load ... due to access control checks.", only shows up in .stack, not .message).
   // Chromium shows neither. Both are the same benign abort; the router's fallback to a
-  // full browser navigation is correct behavior, not a site defect.
-  test.use({ allowedErrors: [/Failed to fetch RSC payload|due to access control checks/] })
+  // full browser navigation is correct behavior, not a site defect. Anchored to `_rsc=`
+  // so a genuine CORS/CSP-blocked fetch during the crawl still fails the test.
+  test.use({ allowedErrors: [/Failed to fetch RSC payload|_rsc=.*due to access control checks/] })
 
   test('every internal link resolves', { tag: '@functional' }, async ({ page, request }) => {
     test.setTimeout(120_000)
