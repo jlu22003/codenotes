@@ -102,6 +102,20 @@ function resolveCssColor(varName: string, fallback: string) {
   return `rgb(${r}, ${g}, ${b})`;
 }
 
+// Probes for WebGL availability with a throwaway canvas before ever
+// constructing the real WebGLRenderer. three.js's own constructor logs via
+// console.error internally the moment context creation fails (before it
+// throws), so catching the throw alone isn't enough to skip silently — this
+// avoids ever calling it when we already know it won't succeed.
+function canCreateWebGLContext() {
+  try {
+    const probe = document.createElement("canvas");
+    return !!(probe.getContext("webgl2") || probe.getContext("webgl"));
+  } catch {
+    return false;
+  }
+}
+
 // A small soft circular dot, shared by every particle in one draw call, so
 // points render as soft circles instead of hard squares.
 function createDotTexture() {
@@ -143,7 +157,16 @@ export default function ParticleSphere({
     const camera = new PerspectiveCamera(50, 1, 0.1, 100);
     camera.position.z = 6;
 
-    const renderer = new WebGLRenderer({ antialias: true, alpha: true });
+    if (!canCreateWebGLContext()) return; // skip the sphere silently; the hero still renders fine without it.
+
+    let renderer: WebGLRenderer;
+    try {
+      renderer = new WebGLRenderer({ antialias: true, alpha: true });
+    } catch {
+      // Belt-and-suspenders: the probe above should already have ruled this
+      // out, but bail the same way if construction still throws.
+      return;
+    }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(0x000000, 0);
     container.appendChild(renderer.domElement);
