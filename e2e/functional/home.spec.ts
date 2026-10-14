@@ -45,7 +45,11 @@ test('carousel arrows page through projects', { tag: '@functional' }, async ({ p
   await next.focus()
   await page.keyboard.press('Enter')
   await expect(previous).toBeEnabled()
-  await expect(first).not.toBeInViewport({ ratio: 1 })
+  // ratio: 1 here would be vacuous — the first slide never reaches ratio 1
+  // (see above), so that assertion would pass even if scrollNext() did
+  // nothing. Use the same reachable threshold so this actually proves the
+  // slide scrolled away.
+  await expect(first).not.toBeInViewport({ ratio: 0.95 })
 
   for (let i = 0; i < projects.length && (await next.isEnabled()); i++) await next.click()
   await expect(next).toBeDisabled()
