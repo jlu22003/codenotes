@@ -133,3 +133,140 @@ test('hero renders when WebGL is unavailable', { tag: '@functional' }, async ({ 
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
   // The guard fixture fails this test if the page threw.
 })
+
+test.describe('hero particle sphere', () => {
+  test.use({ reducedMotion: 'reduce' })
+
+  // Calibration (chromium, 1280x800, right-half of #particle-sphere-background
+  // minus the heading/paragraph/buttons/resume-button bounding boxes, each
+  // padded 24px): per-pixel luminance diff vs the resolved --background color,
+  // share of pixels with diff > 8 —
+  //   dark (known-good):      ~0.0077
+  //   light, fresh load:      ~0.0094 (already correct — color resolves once, at mount, to the then-current theme)
+  //   light, switched from dark: ~0.0049 (the bug — stale dark-theme color painted over a light background)
+  // MINIMUM_SHARE sits between the broken and healthy values, closer to the
+  // broken one so a real (not just marginal) recolor failure trips it.
+  //
+  // Firefox and WebKit were measured too (same methodology) and don't carry
+  // the same separation: WebKit's "switched" share (~0.0105) sits close to
+  // its own "dark" share (~0.0136) — only ~23% lower, vs chromium's ~36%
+  // drop — so a single fixed minimum can't reliably fail the bug on WebKit
+  // without also failing the already-correct fresh-light case on chromium.
+  // This is engine-specific WebGL/canvas anti-aliasing variance, not part of
+  // the bug under test, so this test is scoped to chromium only.
+  const THRESHOLD = 8
+  const MINIMUM_SHARE = 0.006
+
+  test('is visible in light theme', { tag: '@functional' }, async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'threshold calibrated on chromium only — see comment above')
+
+    async function measureVisibleShare() {
+      await expect(page.locator('#particle-sphere-background canvas')).toBeVisible()
+
+      const el = page.locator('#particle-sphere-background')
+      const elBox = (await el.boundingBox())!
+
+      // Exclude the hero's text block and the fixed resume button (both can
+      // overlap the element's bounding box) so only sphere/background pixels
+      // are sampled — padded 24px for anti-aliased edges.
+      const margin = 24
+      const exclusions = (
+        await Promise.all(
+          [
+            page.getByRole('heading', { level: 1 }),
+            page.getByText('Software Engineer', { exact: false }),
+            page.getByRole('link', { name: 'View Work' }),
+            page.getByRole('link', { name: 'Contact Me' }),
+            page.getByRole('button', { name: 'Download Resume' }),
+          ].map(async (locator) => {
+            const box = await locator.boundingBox()
+            if (!box) return null
+            return { x: box.x - margin, y: box.y - margin, width: box.width + margin * 2, height: box.height + margin * 2 }
+          }),
+        )
+      ).filter((box): box is { x: number; y: number; width: number; height: number } => box !== null)
+
+      const buf = await el.screenshot()
+      const dataUrl = `data:image/png;base64,${buf.toString('base64')}`
+
+      return page.evaluate(
+        async ({ url, elBox, exclusions, threshold }) => {
+          // Resolve the page background the same way ParticleSphere resolves
+          // the dot color: rasterize the CSS var to a 1x1 canvas and read the
+          // pixel back, since getComputedStyle's color-string format isn't
+          // reliable across browsers for oklch()/etc.
+          const probe = document.createElement('div')
+          probe.style.color = 'var(--background)'
+          document.body.appendChild(probe)
+          const computed = getComputedStyle(probe).color
+          document.body.removeChild(probe)
+          const bgCanvas = document.createElement('canvas')
+          bgCanvas.width = 1
+          bgCanvas.height = 1
+          const bgCtx = bgCanvas.getContext('2d')!
+          bgCtx.fillStyle = computed
+          bgCtx.fillRect(0, 0, 1, 1)
+          const [br, bg, bb] = bgCtx.getImageData(0, 0, 1, 1).data
+          const bgLum = 0.2126 * br + 0.7152 * bg + 0.0722 * bb
+
+          // Decode the element screenshot via an in-page canvas — no image
+          // library needed.
+          const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+            const image = new Image()
+            image.onload = () => resolve(image)
+            image.onerror = reject
+            image.src = url
+          })
+          const canvas = document.createElement('canvas')
+          canvas.width = img.width
+          canvas.height = img.height
+          const ctx = canvas.getContext('2d')!
+          ctx.drawImage(img, 0, 0)
+          const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height)
+
+          const inExclusion = (vx: number, vy: number) =>
+            exclusions.some((r) => vx >= r.x && vx <= r.x + r.width && vy >= r.y && vy <= r.y + r.height)
+
+          // Right half only — away from the hero's radial scrim, which is
+          // centered at 25%/78% of the section and fades out by 75% of its
+          // ellipse radius.
+          const startX = Math.floor(canvas.width / 2)
+          let lit = 0
+          let total = 0
+          for (let y = 0; y < canvas.height; y++) {
+            for (let x = startX; x < canvas.width; x++) {
+              const vx = elBox.x + x
+              const vy = elBox.y + y
+              if (inExclusion(vx, vy)) continue
+              const i = (y * canvas.width + x) * 4
+              const lum = 0.2126 * data[i] + 0.7152 * data[i + 1] + 0.0722 * data[i + 2]
+              if (Math.abs(lum - bgLum) > threshold) lit++
+              total++
+            }
+          }
+          return lit / total
+        },
+        { url: dataUrl, elBox, exclusions, threshold: THRESHOLD },
+      )
+    }
+
+    await test.step('fresh load with light theme stored', async () => {
+      await page.addInitScript(() => localStorage.setItem('theme', 'light'))
+      await page.goto('/')
+      expect(await measureVisibleShare()).toBeGreaterThanOrEqual(MINIMUM_SHARE)
+    })
+
+    await test.step('load dark then switch to Light via the theme switcher', async () => {
+      // Registers after the 'light' script above — init scripts run in
+      // registration order, so this one (setting 'dark') runs second and
+      // wins on this next goto.
+      await page.addInitScript(() => localStorage.setItem('theme', 'dark'))
+      await page.goto('/')
+      await expect(page.locator('#particle-sphere-background canvas')).toBeVisible()
+      await page.locator('button[title="Change theme"]:visible').first().click()
+      await page.getByRole('option', { name: 'Light' }).click()
+      await frames(page, 2) // let a theme-triggered re-render (post-fix) paint
+      expect(await measureVisibleShare()).toBeGreaterThanOrEqual(MINIMUM_SHARE)
+    })
+  })
+})
