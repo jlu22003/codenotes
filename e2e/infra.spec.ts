@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures'
+import { test, expect, PIXEL } from './fixtures'
 
 test.describe('network guard', () => {
   test('fails a test that requests an external host', { tag: '@functional' }, async ({ page }) => {
@@ -13,6 +13,7 @@ test.describe('network guard', () => {
     const response = await stubbedResponse
     expect(response.status()).toBe(200)
     expect(response.headers()['content-type']).toBe('image/png')
+    expect(await response.body()).toEqual(PIXEL)
   })
 })
 

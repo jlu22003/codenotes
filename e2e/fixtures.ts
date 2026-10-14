@@ -1,7 +1,7 @@
 import { test as base, expect } from '@playwright/test'
 
 const STUBBED_HOSTS = ['images.react-photo-album.com']
-const PIXEL = Buffer.from(
+export const PIXEL = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
   'base64',
 )
