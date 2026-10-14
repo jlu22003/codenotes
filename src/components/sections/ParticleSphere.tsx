@@ -23,6 +23,18 @@ const ROTATION_RADIANS_PER_SECOND = (2 * Math.PI) / 90; // slow, ambient drift
 const MAX_MOUSE_YAW = 0.5; // radians of extra tilt at the viewport edge
 const MAX_MOUSE_PITCH = 0.3;
 
+// The same dot opacity reads differently depending on the theme: a near-white
+// light background needs more of it for the dots to stay perceptible, while
+// the dark background already gives them plenty of contrast at the lower
+// value — raising it there too would just make the field feel heavier than
+// intended.
+const DOT_OPACITY_DARK = 0.55;
+const DOT_OPACITY_LIGHT = 0.8;
+
+function isDarkTheme() {
+  return document.documentElement.classList.contains("dark");
+}
+
 // Scroll-driven explosion: each particle flies outward along its own
 // randomized direction vector — not just along its existing radial line from
 // center — by an amount continuously tied to how fast the page is being
@@ -177,7 +189,7 @@ export default function ParticleSphere({
       size: 0.045,
       map: dotTexture ?? undefined,
       transparent: true,
-      opacity: 0.55,
+      opacity: isDarkTheme() ? DOT_OPACITY_DARK : DOT_OPACITY_LIGHT,
       sizeAttenuation: true,
       depthWrite: false,
     });
@@ -207,6 +219,7 @@ export default function ParticleSphere({
     // whenever that class changes.
     const applyThemeColor = () => {
       material.color.set(resolveCssColor("--foreground", "#3a3a3a"));
+      material.opacity = isDarkTheme() ? DOT_OPACITY_DARK : DOT_OPACITY_LIGHT;
       if (prefersReducedMotion) renderer.render(scene, camera);
     };
     const themeObserver = new MutationObserver(applyThemeColor);
