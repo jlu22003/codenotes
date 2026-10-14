@@ -110,7 +110,12 @@ function resolveCssColor(varName: string, fallback: string) {
 function canCreateWebGLContext() {
   try {
     const probe = document.createElement("canvas");
-    return !!(probe.getContext("webgl2") || probe.getContext("webgl"));
+    const gl = probe.getContext("webgl2") || probe.getContext("webgl");
+    // Release the probe context immediately — browsers cap the number of
+    // live WebGL contexts, and this one has no further use once we know
+    // whether creation succeeded.
+    gl?.getExtension("WEBGL_lose_context")?.loseContext();
+    return !!gl;
   } catch {
     return false;
   }
