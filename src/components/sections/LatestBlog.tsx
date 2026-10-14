@@ -1,6 +1,7 @@
 // components/sections/LatestBlog.tsx
 import { getPageMap } from "nextra/page-map";
 import type { MdxFile, PageMapItem } from "nextra";
+import blogMeta from "@/content/blog/_meta.js";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
@@ -31,7 +32,11 @@ const LatestBlog = async ({
   const latestPost = await getLatestPost();
   if (!latestPost) return null;
 
-  const title = latestPost.frontMatter?.title ?? latestPost.name;
+  // getPageMap() returns raw MdxFile items with no _meta.js merge; resolve
+  // the title the same way the sidebar/blog index already do (meta title
+  // first), so this card doesn't show a different name for the same post.
+  const metaTitle = (blogMeta as Record<string, { title?: string }>)[latestPost.name]?.title;
+  const title = metaTitle ?? latestPost.frontMatter?.title ?? latestPost.name;
   const date = latestPost.frontMatter?.date
     ? new Date(latestPost.frontMatter.date).toLocaleDateString("en-US", {
         year: "numeric",
