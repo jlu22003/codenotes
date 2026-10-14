@@ -37,6 +37,8 @@ const LatestBlog = async ({
         year: "numeric",
         month: "long",
         day: "numeric",
+        // Date-only front matter ("YYYY-MM-DD") parses as UTC midnight; format in UTC too, or it renders a day early in any timezone behind UTC.
+        timeZone: "UTC",
       })
     : null;
 
