@@ -1,8 +1,18 @@
 'use client'
 
 import { useEffect } from 'react'
+import { setMenu } from 'nextra-theme-docs'
 
 export default function AccessibilityPatches() {
+  useEffect(() => {
+    // Nextra's mobile sidebar menu has no Escape-to-close handler of its own.
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenu(false)
+    }
+    document.addEventListener('keydown', onKeyDown)
+    return () => document.removeEventListener('keydown', onKeyDown)
+  }, [])
+
   useEffect(() => {
     // Fix "Copy page" button
     document
