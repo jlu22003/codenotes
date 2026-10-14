@@ -67,3 +67,69 @@ test('latest writing shows the newest post with its front-matter date', { tag: '
   await expect(section).toContainText(`${latestPost!.title} — ${expectedDate}`)
   await expect(section.getByRole('link', { name: /^Read the post: / })).toHaveAttribute('href', latestPost!.route)
 })
+
+async function frames(page: import('@playwright/test').Page, count: number) {
+  await page.evaluate(
+    (n) => new Promise<void>((resolve) => {
+      let left = n
+      const tick = () => (--left <= 0 ? resolve() : requestAnimationFrame(tick))
+      requestAnimationFrame(tick)
+    }),
+    count,
+  )
+}
+
+test('resume button downloads the PDF', { tag: '@functional' }, async ({ page, request }) => {
+  await page.goto('/')
+  const download = page.waitForEvent('download')
+  await page.getByRole('button', { name: 'Download Resume' }).click()
+  expect((await download).suggestedFilename()).toBe('2025Resume.pdf')
+  const pdf = await request.get('/2025Resume.pdf')
+  expect(pdf.status()).toBe(200)
+  expect(pdf.headers()['content-type']).toContain('application/pdf')
+})
+
+test('resume button hides while over the projects section', { tag: '@functional' }, async ({ page }) => {
+  await page.goto('/')
+  await expect(page.getByRole('button', { name: 'Download Resume' })).toBeVisible()
+  await page.locator('#projects').evaluate((el) => el.scrollIntoView({ block: 'end' }))
+  await expect(page.getByRole('button', { name: 'Download Resume' })).toHaveCount(0) // aria-hidden
+})
+
+test('skills marquee moves and pauses on focus', { tag: '@functional' }, async ({ page }) => {
+  await page.goto('/')
+  const group = page.getByRole('group', { name: /^Build skills, scrolling/ })
+  const row = group.locator(':scope > div')
+  const transform = () => row.evaluate((el) => getComputedStyle(el).transform)
+
+  const start = await transform()
+  await expect.poll(transform).not.toBe(start)
+
+  await group.focus()
+  const paused = await transform()
+  await frames(page, 30)
+  expect(await transform()).toBe(paused)
+})
+
+test.describe('reduced motion', () => {
+  test.use({ reducedMotion: 'reduce' })
+
+  test('skills render statically', { tag: '@functional' }, async ({ page }) => {
+    await page.goto('/')
+    await expect(page.getByRole('group', { name: /scrolling/ })).toHaveCount(0)
+    await expect(page.locator('#skills').getByText('TypeScript', { exact: true })).toHaveCount(1)
+  })
+})
+
+test('hero renders when WebGL is unavailable', { tag: '@functional' }, async ({ page }) => {
+  // ⚠ possible bug: ParticleSphere creates WebGLRenderer without a guard.
+  await page.addInitScript(() => {
+    const getContext = HTMLCanvasElement.prototype.getContext
+    HTMLCanvasElement.prototype.getContext = function (this: HTMLCanvasElement, type: string, ...rest: unknown[]) {
+      return /webgl/.test(type) ? null : getContext.call(this, type, ...(rest as []))
+    } as typeof getContext
+  })
+  await page.goto('/')
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
+  // The guard fixture fails this test if the page threw.
+})
