@@ -170,7 +170,7 @@ test.describe('hero particle sphere', () => {
   test('is visible in light theme', { tag: '@functional' }, async ({ page, browserName }) => {
     test.skip(browserName === 'webkit', 'threshold not reliable on WebKit — see comment above')
     const hasWebGL = await page.evaluate(() => !!document.createElement('canvas').getContext('webgl'))
-    test.skip(!hasWebGL, 'no WebGL in this browser (e.g. headless Firefox on Linux), so the site correctly renders no sphere')
+    test.skip(!hasWebGL && browserName === 'firefox', 'no WebGL in this browser (e.g. headless Firefox on Linux), so the site correctly renders no sphere')
 
     async function measureVisibleShare() {
       await expect(page.locator('#particle-sphere-background canvas')).toBeVisible()
