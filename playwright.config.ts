@@ -8,12 +8,15 @@ export default defineConfig({
   testDir: './e2e',
   testIgnore: ['**/external/**'],
   fullyParallel: true,
+  // amd64 emulation on Apple silicon is several times slower than native.
+  ...(process.env.E2E_DOCKER ? { timeout: 120_000, workers: 2 } : {}),
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
   grepInvert: process.env.E2E_DOCKER ? /@external/ : /@external|@visual/,
   snapshotPathTemplate: '{testDir}/__screenshots__/{projectName}/{testFilePath}/{arg}{ext}',
   expect: {
+    ...(process.env.E2E_DOCKER ? { timeout: 30_000 } : {}),
     toHaveScreenshot: { animations: 'disabled', caret: 'hide', maxDiffPixelRatio: 0.01 },
   },
   use: {
