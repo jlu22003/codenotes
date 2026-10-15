@@ -35,7 +35,7 @@ Most engineering portfolios show only what was shipped. This one also shows the 
 ## Brand Commitments
 - Name: Justin K. Lu / Justin Lu. Logo mark: "J."
 - Voice: restrained and technical, deliberately avoiding generic portfolio language ("passionate developer," adjective-only claims). Prefers structured facts and real numbers over prose claims wherever the underlying evidence supports it.
-- Visual system: neutral OKLCH palette with a single warm-brown accent color, reserved for interactive elements only (never decorative). Montserrat (headings) / Roboto (body) / JetBrains Mono (technical facts — tags, dates, stats, code) as the type system.
+- Visual system: neutral OKLCH palette with a single warm-brown accent color, reserved for interactive elements only (never decorative). Montserrat (headings) / Arial (body) / JetBrains Mono (technical facts — tags, dates, stats, code) as the type system.
 - Animation philosophy: motion is feedback, not decoration, with one deliberate exception (the hero's WebGL particle sphere, an intentional ambient signature) — everything else respects `prefers-reduced-motion`.
 
 ## Evidence on Hand

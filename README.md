@@ -12,7 +12,7 @@ Most engineering portfolios show only what was shipped. This one also shows the 
 - **Site-wide search.** [Pagefind](https://pagefind.app/) indexes the built pages, and search runs fully client-side.
 - **Working contact form.** Client-side validation, plus an API route that validates again on the server and sends the email through [Resend](https://resend.com/).
 - **Accessibility as a feature.** It respects reduced motion, the skills marquee pauses on hover and keyboard focus, the mobile menu closes on Escape, and form errors are announced to screen readers.
-- **One design system.** Neutral OKLCH palette with one warm accent reserved for interactive elements; Montserrat, Roboto and JetBrains Mono. See [`DESIGN.md`](DESIGN.md).
+- **One design system.** Neutral OKLCH palette with one warm accent reserved for interactive elements; Montserrat, Arial and JetBrains Mono. See [`DESIGN.md`](DESIGN.md).
 
 ## Tech stack
 
