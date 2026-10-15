@@ -35,15 +35,16 @@ export default defineConfig({
     {
       command: 'node e2e/fake-resend.mjs',
       url: `http://localhost:${RESEND_PORT}`,
-      reuseExistingServer: false,
+      reuseExistingServer: !!process.env.E2E_REUSE,
       env: { E2E_RESEND_PORT: String(RESEND_PORT) },
     },
     {
       command: `npm run build && npx next start -p ${PORT}`,
       url: baseURL,
-      // Never reuse: a server started outside Playwright could be holding the
-      // real RESEND_API_KEY from .env.local and send real email.
-      reuseExistingServer: false,
+      // Never reuse by default: a server started outside Playwright could be holding the
+      // real RESEND_API_KEY from .env.local and send real email. E2E_REUSE=1 is only
+      // for servers started by `npm run test:e2e:serve` (fake email env).
+      reuseExistingServer: !!process.env.E2E_REUSE,
       // amd64 emulation on Apple silicon builds far slower than native.
       timeout: process.env.E2E_EMULATED ? 1_200_000 : 300_000,
       // Real environment variables win over .env.local in Next.js.

@@ -66,9 +66,12 @@ test.describe('content source', () => {
   })
 })
 
+// Unique per run: the fake keeps its state between runs under E2E_REUSE.
+const RUN = Date.now().toString(36)
+
 test.describe('fake resend', () => {
   test('site sends through the fake, never the real API', { tag: '@functional' }, async ({ request }, testInfo) => {
-    const name = `Infra ${testInfo.testId}-${testInfo.repeatEachIndex}`
+    const name = `Infra ${testInfo.testId}-${testInfo.repeatEachIndex}-${RUN}`
     const response = await request.post('/api/contact', {
       data: { name, email: 'infra@example.com', message: 'hello' },
     })
@@ -84,13 +87,13 @@ test.describe('fake resend', () => {
   // ignores the SDK's { error } shape, see Task 13 bug #6), so a response forwarded through the
   // site would always read back 200 regardless of the fake's matching logic.
   test('returns a queued response only to the matching sender', { tag: '@functional' }, async ({ request }, testInfo) => {
-    const name = `Queued ${testInfo.testId}-${testInfo.repeatEachIndex}`
+    const name = `Queued ${testInfo.testId}-${testInfo.repeatEachIndex}-${RUN}`
     await request.post(`${FAKE_RESEND}/__next`, {
       data: { match: name, status: 422, body: { name: 'validation_error', message: 'bad', statusCode: 422 } },
     })
 
     const other = await request.post(`${FAKE_RESEND}/emails`, {
-      data: { subject: `Portfolio Contact from Other ${testInfo.testId}-${testInfo.repeatEachIndex}` },
+      data: { subject: `Portfolio Contact from Other ${testInfo.testId}-${testInfo.repeatEachIndex}-${RUN}` },
     })
     expect(other.status()).toBe(200)
 
