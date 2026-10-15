@@ -235,3 +235,10 @@
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* Nextra's navbar search input removes its own outline on focus; give it the
+   site's ring so keyboard users can see where they are. */
+.nextra-search input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
