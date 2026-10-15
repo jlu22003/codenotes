@@ -3,8 +3,8 @@ import { test, expect } from '../fixtures'
 import { routes } from '../content'
 
 test.describe('per-route', () => {
-  // Next.js RSC prefetches abort on Firefox/WebKit when the test navigates away.
-  test.use({ allowedErrors: [/Failed to fetch RSC payload|_rsc=.*due to access control checks/] })
+  // Navigating away aborts Next.js RSC prefetches (Firefox/WebKit) and in-flight font downloads (Firefox).
+  test.use({ allowedErrors: [/Failed to fetch RSC payload|_rsc=.*due to access control checks|downloadable font: download failed/] })
 for (const route of routes) {
   test(`${route} has no serious axe violations`, { tag: '@a11y' }, async ({ page }) => {
     const found: string[] = []
@@ -55,7 +55,10 @@ test('keyboard reaches key controls with a visible focus ring', { tag: '@a11y' }
       if (el === document.body) return null // Tab wrapped past the last control
       const style = getComputedStyle(el)
       const name = el.getAttribute('aria-label') ?? el.textContent?.trim().slice(0, 40) ?? el.tagName
-      return { name, ring: style.outlineStyle !== 'none' || style.boxShadow !== 'none' }
+      // Tailwind's reset leaves `rgba(0, 0, 0, 0) 0px 0px 0px 0px`, which is not a ring.
+      const shadow = style.boxShadow.replace(/rgba\([^)]*,\s*0\)|transparent|none|inset|0px|[\s,]/g, '')
+      const outline = style.outlineStyle !== 'none' && parseFloat(style.outlineWidth) > 0
+      return { name, ring: outline || shadow !== '' }
     })
     if (!info) continue
     reached.push(info.name)
