@@ -3,14 +3,30 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
 export async function POST(request: Request) {
+  let body: Record<string, unknown>;
   try {
-    const body = await request.json();
-    const { name, email, message } = body;
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
+  try {
+    const { name, email, message } = (body ?? {}) as {
+      name?: unknown;
+      email?: unknown;
+      message?: unknown;
+    };
 
     // Validate required fields
     if (!name) {
       return NextResponse.json(
         { error: "Name is required", field: "firstName" },
+        { status: 400 }
+      );
+    }
+    if (typeof name !== "string") {
+      return NextResponse.json(
+        { error: "Name must be a string", field: "firstName" },
         { status: 400 }
       );
     }
@@ -20,9 +36,21 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+    if (typeof email !== "string") {
+      return NextResponse.json(
+        { error: "Email must be a string", field: "email" },
+        { status: 400 }
+      );
+    }
     if (!message) {
       return NextResponse.json(
         { error: "Message is required", field: "message" },
+        { status: 400 }
+      );
+    }
+    if (typeof message !== "string") {
+      return NextResponse.json(
+        { error: "Message must be a string", field: "message" },
         { status: 400 }
       );
     }
