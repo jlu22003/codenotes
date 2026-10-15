@@ -88,6 +88,11 @@ test('focus rings', { tag: '@visual' }, async ({ page }) => {
     await target.focus()
     await page.keyboard.press('Shift+Tab')
     await page.keyboard.press('Tab') // keyboard focus, so :focus-visible applies
-    await expect(target).toHaveScreenshot(`focus-${name}.png`)
+    // Padded clip: the focus ring is drawn outside the element's box, so an element-only crop hides it.
+    const box = (await target.boundingBox())!
+    const pad = 8
+    await expect(page).toHaveScreenshot(`focus-${name}.png`, {
+      clip: { x: box.x - pad, y: box.y - pad, width: box.width + 2 * pad, height: box.height + 2 * pad },
+    })
   }
 })
