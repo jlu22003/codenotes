@@ -3,7 +3,7 @@ import { Footer, Layout, Navbar } from 'nextra-theme-docs'
 import { Head, Search } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
 import 'nextra-theme-docs/style.css'
-import { Montserrat, Roboto, JetBrains_Mono } from 'next/font/google'
+import { Montserrat, JetBrains_Mono } from 'next/font/google'
 import AccessibilityPatches from '@/components/ui/AcessibilityPatches';
 import StatusLine from '@/components/ui/StatusLine';
 import TocTechStack from '@/components/ui/TocTechStack';
@@ -13,17 +13,6 @@ const montserrat = Montserrat({
   subsets: ['latin'],
   weight: ['700', '800'],
   variable: '--font-montserrat',
-  display: 'swap',
-  fallback: ['system-ui', 'sans-serif'],
-  adjustFontFallback: true,
-  preload: true,
-})
-
-// Configure Roboto for body text
-const roboto = Roboto({
-  subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-roboto',
   display: 'swap',
   fallback: ['system-ui', 'sans-serif'],
   adjustFontFallback: true,
@@ -88,7 +77,7 @@ export default async function RootLayout({ children }: {
       lang="en"
       dir="ltr"
       suppressHydrationWarning
-      className={`${montserrat.variable} ${roboto.variable} ${jetbrainsMono.variable}`}
+      className={`${montserrat.variable} ${jetbrainsMono.variable}`}
     >
       <Head
         color={{
