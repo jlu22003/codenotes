@@ -65,7 +65,7 @@ const LatestBlog = async ({
               >
                 {heading}
               </h2>
-              <p className="text-lg text-accent-foreground/70 dark:text-muted-foreground">
+              <p className="text-lg text-accent-foreground dark:text-muted-foreground">
                 <span className="font-medium text-accent-foreground dark:text-foreground">{title}</span>
                 {date && <> — {date}</>}
               </p>
