@@ -99,3 +99,22 @@ test('sends the expected payload', { tag: '@functional' }, async ({ page }) => {
   await expect(page.getByRole('status')).toContainText('Message sent successfully!')
   expect(calls).toEqual([{ name: 'Ada Lovelace', email: 'ada@example.com', message: 'Hello' }])
 })
+
+test('keeps a value entered before hydration when another field is edited', { tag: '@functional' }, async ({ context }) => {
+  // Fresh page with the app's scripts held back, so the value is set while the
+  // form is still server-rendered, then React hydrates and a second field is edited.
+  const early = await context.newPage()
+  let release!: () => void
+  const gate = new Promise<void>((resolve) => (release = resolve))
+  await early.route('**/_next/static/**/*.js', async (route) => {
+    await gate
+    await route.continue()
+  })
+  await early.goto('/#contact-me', { waitUntil: 'commit' })
+  await early.locator('#firstName').evaluate((el: HTMLInputElement) => (el.value = 'Ada'))
+  release()
+  await waitForHydratedForm(early)
+  await early.getByLabel('Last Name', { exact: true }).fill('Lovelace')
+  await expect(early.getByLabel('First Name', { exact: true })).toHaveValue('Ada')
+  await early.close()
+})
