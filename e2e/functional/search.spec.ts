@@ -14,16 +14,16 @@ const query = title.slice(0, 4).toLowerCase() // partial and different case
 // assertion timeout, so these first-result assertions get extra headroom.
 const SEARCH_TIMEOUT = 15_000
 
-// The search box is server-rendered before React hydrates it. A fill() that
-// lands in that window can be silently discarded when hydration mounts and
-// resets the controlled input back to its initial (empty) value — same race
-// documented in contact-form.spec.ts's safeFill. Retry until it sticks.
+// The search box is server-rendered before React hydrates it, and text typed in that
+// window can be discarded when hydration mounts. Wait for React to have attached to the
+// input (the same signal contact-form.spec.ts uses), then fill once with no retry.
 async function searchFor(page: Page, value: string) {
   const input = page.getByRole('combobox', { name: 'Search...' })
-  await expect(async () => {
-    await input.fill(value)
-    await expect(input).toHaveValue(value)
-  }).toPass()
+  await expect
+    .poll(() => input.evaluate((el) => Object.keys(el).some((key) => key.startsWith('__reactProps$'))))
+    .toBe(true)
+  await input.fill(value)
+  await expect(input).toHaveValue(value)
 }
 
 test('finds a project by partial, case-insensitive title', { tag: '@functional' }, async ({ page }) => {
@@ -55,5 +55,5 @@ test('works from the keyboard', { tag: '@functional' }, async ({ page }) => {
   await expect(page.getByRole('option').first()).toBeVisible({ timeout: SEARCH_TIMEOUT })
   await page.keyboard.press('ArrowDown')
   await page.keyboard.press('Enter')
-  await expect(page).not.toHaveURL('/')
+  await expect(page).toHaveURL(new RegExp(`${route}(#.*)?$`))
 })
