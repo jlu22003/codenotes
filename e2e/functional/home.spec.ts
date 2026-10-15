@@ -51,7 +51,15 @@ test('carousel arrows page through projects', { tag: '@functional' }, async ({ p
   // slide scrolled away.
   await expect(first).not.toBeInViewport({ ratio: 0.95 })
 
-  for (let i = 0; i < projects.length && (await next.isEnabled()); i++) await next.click()
+  // Wait for the track to actually move after each click; slower engines
+  // (WebKit on Linux) otherwise outrun Embla's state updates.
+  const track = first.locator('xpath=..')
+  const offset = () => track.evaluate((el) => getComputedStyle(el).transform)
+  for (let i = 0; i < projects.length && (await next.isEnabled()); i++) {
+    const before = await offset()
+    await next.click()
+    await expect.poll(offset).not.toBe(before)
+  }
   await expect(next).toBeDisabled()
 })
 
@@ -161,6 +169,8 @@ test.describe('hero particle sphere', () => {
 
   test('is visible in light theme', { tag: '@functional' }, async ({ page, browserName }) => {
     test.skip(browserName === 'webkit', 'threshold not reliable on WebKit — see comment above')
+    const hasWebGL = await page.evaluate(() => !!document.createElement('canvas').getContext('webgl'))
+    test.skip(!hasWebGL, 'no WebGL in this browser (e.g. headless Firefox on Linux), so the site correctly renders no sphere')
 
     async function measureVisibleShare() {
       await expect(page.locator('#particle-sphere-background canvas')).toBeVisible()
