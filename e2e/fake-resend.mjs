@@ -2,7 +2,7 @@
 // RESEND_BASE_URL; tests steer it with /__next and inspect it with /__sent.
 import http from 'node:http'
 
-const PORT = 3201
+const PORT = Number(process.env.E2E_RESEND_PORT ?? 3201)
 const queue = []
 const sent = []
 

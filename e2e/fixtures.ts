@@ -5,6 +5,7 @@ export const PIXEL = Buffer.from(
   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
   'base64',
 )
+export const FAKE_RESEND = `http://localhost:${process.env.E2E_RESEND_PORT ?? 3201}`
 
 export const test = base.extend<{ allowedErrors: RegExp[]; guard: void }>({
   allowedErrors: [[], { option: true }],
