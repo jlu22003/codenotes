@@ -53,7 +53,7 @@ export default function Hero() {
           </h1>
 
           <p className="text-xl sm:text-2xl md:text-4xl text-muted-foreground mb-8">
-            Software Engineer — Frontend &amp; Production Support
+            Software Engineer
           </p>
           <div className="flex flex-wrap gap-4">
             <Button
