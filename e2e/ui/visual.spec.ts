@@ -66,6 +66,8 @@ for (const [size, viewport] of Object.entries(VIEWPORTS)) {
 
     test('contact form states', { tag: '@visual' }, async ({ page }) => {
       await page.route('**/api/contact', (route) => route.fulfill({ json: { message: 'ok' } }))
+      // The success banner clears itself after 5s; take the clock before the page loads so timing is controlled.
+      await page.clock.install()
       await settle(page, '/', 'light')
       const card = page.locator('#contact-me form').locator('xpath=ancestor::*[contains(@class,"rounded")][1]')
       await expect(card).toHaveScreenshot(`contact-idle-${size}.png`)

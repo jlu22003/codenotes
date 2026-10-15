@@ -83,9 +83,7 @@ test.describe('fake resend', () => {
   })
 
   // Hits the fake server's /emails endpoint directly, the way the Resend SDK does, rather than
-  // through /api/contact: the route never inspects resend.emails.send()'s return value (it
-  // ignores the SDK's { error } shape, see Task 13 bug #6), so a response forwarded through the
-  // site would always read back 200 regardless of the fake's matching logic.
+  // through /api/contact. This isolates the fake's matching logic from the site.
   test('returns a queued response only to the matching sender', { tag: '@functional' }, async ({ request }, testInfo) => {
     const name = `Queued ${testInfo.testId}-${testInfo.repeatEachIndex}-${RUN}`
     await request.post(`${FAKE_RESEND}/__next`, {

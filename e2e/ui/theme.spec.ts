@@ -43,7 +43,7 @@ test.describe('system preference', () => {
   })
 })
 
-test('dark theme dropdown matches the page background', { tag: '@visual' }, async ({ page }) => {
+test('dark theme dropdown matches the page background', { tag: '@functional' }, async ({ page }) => {
   await page.goto('/')
   await choose(page, 'Dark')
   await switcher(page).click()
