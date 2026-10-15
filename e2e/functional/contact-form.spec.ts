@@ -150,9 +150,9 @@ test('disables the form while sending and sends once', { tag: '@functional' }, a
 })
 
 test('success message resets the form and clears after 5 seconds', { tag: '@functional' }, async ({ page }) => {
+  // beforeEach already loaded and hydrated the page; installing the clock now still
+  // fakes the 5s timer set on submit, and avoids a second navigation.
   await page.clock.install()
-  await page.goto('/#contact-me')
-  await waitForHydratedForm(page)
   await countApiCalls(page)
   await fill(page, valid)
   await submit(page)
