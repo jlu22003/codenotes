@@ -82,7 +82,7 @@ export async function POST(request: Request) {
     
     const resend = new Resend(process.env.RESEND_API_KEY);
 
-    await resend.emails.send({
+    const { error: sendError } = await resend.emails.send({
       from: 'Portfolio Contact <onboarding@resend.dev>', // Change after domain verification
       to: 'justinklu75@gmail.com',
       replyTo: email, // Allows you to reply directly to sender
@@ -95,6 +95,10 @@ export async function POST(request: Request) {
         <p>${message.replace(/\n/g, '<br>')}</p>
       `,
     });
+
+    if (sendError) {
+      throw sendError;
+    }
 
     return NextResponse.json(
       { message: "Message sent successfully" },
