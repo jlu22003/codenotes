@@ -1,7 +1,7 @@
 // components/sections/Contact.tsx
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +26,21 @@ export default function Contact() {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+
+  const formRef = useRef<HTMLFormElement>(null);
+
+  // The form is server-rendered, so a value entered before hydration (autofill,
+  // fast typing) never reaches state and would be wiped by the next edit.
+  useEffect(() => {
+    const form = formRef.current;
+    if (!form) return;
+    const entered: Partial<typeof formData> = {};
+    for (const name of ["firstName", "lastName", "email", "message"] as const) {
+      const value = (form.elements.namedItem(name) as HTMLInputElement | null)?.value;
+      if (value) entered[name] = value;
+    }
+    if (Object.keys(entered).length > 0) setFormData((prev) => ({ ...prev, ...entered }));
+  }, []);
 
   const validate = (): FieldErrors => {
     const errors: FieldErrors = {};
@@ -188,7 +203,7 @@ export default function Contact() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} noValidate className="space-y-6">
+            <form ref={formRef} onSubmit={handleSubmit} noValidate className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label htmlFor="firstName">First Name</Label>

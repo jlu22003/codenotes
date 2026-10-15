@@ -6,7 +6,7 @@
    primary (plain dark/light gray, no hue at all) with the only warmth
    living in the accent role (hover states, sidebar highlight) and a
    muted coral-red for errors. Colors only — this project keeps its own
-   established type system (Montserrat/Roboto/JetBrains Mono), not the
+   established type system (Montserrat/Arial/JetBrains Mono), not the
    stock theme's handwriting font (Architects Daughter) and Fira Code. */
 :root {
   --background: oklch(0.9821 0 0);
@@ -89,7 +89,7 @@
   
   /* Font family variables */
   --font-heading: var(--font-montserrat);
-  --font-body: var(--font-roboto);
+  --font-body: Arial, "Helvetica Neue", Helvetica, sans-serif;
   /* Overrides Tailwind's built-in font-mono utility */
   --font-mono: var(--font-jetbrains-mono);
 }
@@ -102,7 +102,8 @@
   
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-roboto), system-ui, -apple-system, sans-serif;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    line-height: 1.6;
   }
 
   /* Text selection reuses the accent — DESIGN.md's own "highlighter pass"
@@ -165,7 +166,7 @@
   
   /* Ensure buttons and interactive elements use body font */
   button, input, textarea, select {
-    font-family: var(--font-roboto), system-ui, -apple-system, sans-serif;
+    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
   }
   
   /* Ensure Nextra's specific elements respect our color system */
@@ -232,4 +233,13 @@
   .dark .bg-subtle {
     background-color: oklch(0.22 0 0);
   }
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Nextra's navbar search input removes its own outline on focus; give it the
+   site's ring so keyboard users can see where they are. */
+.nextra-search input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }

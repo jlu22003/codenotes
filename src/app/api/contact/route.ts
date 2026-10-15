@@ -2,15 +2,39 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
 export async function POST(request: Request) {
+  let body: Record<string, unknown>;
   try {
-    const body = await request.json();
-    const { name, email, message } = body;
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
+
+  try {
+    const { name, email, message } = (body ?? {}) as {
+      name?: unknown;
+      email?: unknown;
+      message?: unknown;
+    };
 
     // Validate required fields
     if (!name) {
       return NextResponse.json(
         { error: "Name is required", field: "firstName" },
+        { status: 400 }
+      );
+    }
+    if (typeof name !== "string") {
+      return NextResponse.json(
+        { error: "Name must be a string", field: "firstName" },
         { status: 400 }
       );
     }
@@ -20,9 +44,21 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+    if (typeof email !== "string") {
+      return NextResponse.json(
+        { error: "Email must be a string", field: "email" },
+        { status: 400 }
+      );
+    }
     if (!message) {
       return NextResponse.json(
         { error: "Message is required", field: "message" },
+        { status: 400 }
+      );
+    }
+    if (typeof message !== "string") {
+      return NextResponse.json(
+        { error: "Message must be a string", field: "message" },
         { status: 400 }
       );
     }
@@ -54,19 +90,23 @@ export async function POST(request: Request) {
     
     const resend = new Resend(process.env.RESEND_API_KEY);
 
-    await resend.emails.send({
+    const { error: sendError } = await resend.emails.send({
       from: 'Portfolio Contact <onboarding@resend.dev>', // Change after domain verification
       to: 'justinklu75@gmail.com',
       replyTo: email, // Allows you to reply directly to sender
       subject: `Portfolio Contact from ${name}`,
       html: `
         <h2>New Contact Form Submission</h2>
-        <p><strong>From:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>From:</strong> ${escapeHtml(name)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(email)}</p>
         <p><strong>Message:</strong></p>
-        <p>${message.replace(/\n/g, '<br>')}</p>
+        <p>${escapeHtml(message).replace(/\n/g, '<br>')}</p>
       `,
     });
+
+    if (sendError) {
+      throw sendError;
+    }
 
     return NextResponse.json(
       { message: "Message sent successfully" },

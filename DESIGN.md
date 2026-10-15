@@ -26,9 +26,9 @@ typography:
     fontWeight: 700
     letterSpacing: "-0.02em"
   body:
-    fontFamily: "Roboto, system-ui, -apple-system, sans-serif"
+    fontFamily: "Arial, \"Helvetica Neue\", Helvetica, sans-serif"
     fontWeight: 400
-    lineHeight: 1.5
+    lineHeight: 1.6
   label:
     fontFamily: "JetBrains Mono, ui-monospace, monospace"
     fontWeight: 400
@@ -123,16 +123,16 @@ Primary, secondary, and every neutral are achromatic (chroma = 0) — genuine gr
 ## Typography
 
 **Display/Headline Font:** Montserrat (with system-ui, -apple-system fallback)
-**Body Font:** Roboto (with system-ui, -apple-system fallback)
+**Body Font:** Arial (with Helvetica Neue, Helvetica, sans-serif fallback; system-installed, no webfont)
 **Label/Mono Font:** JetBrains Mono (with ui-monospace fallback)
 
-**Character:** Montserrat carries authority in short bursts (headings only, tight tracking); Roboto is the quiet workhorse for anything meant to be read at length; JetBrains Mono exists purely to mark a claim as a verifiable fact rather than prose.
+**Character:** Montserrat carries authority in short bursts (headings only, tight tracking); Arial is the quiet workhorse for anything meant to be read at length; JetBrains Mono exists purely to mark a claim as a verifiable fact rather than prose.
 
 ### Hierarchy
 - **Display** (800, 2.25rem base, 1.1 line-height, −0.02em tracking): hero `h1` only.
 - **Headline** (700, −0.02em tracking): `h2` section titles.
 - **Title** (700, −0.02em tracking): `h3`–`h6`, card and subsection titles — same weight/tracking family as Headline, one step down in size.
-- **Body** (400 Roboto, 1.5 line-height): all prose — descriptions, project summaries, form copy.
+- **Body** (400 Arial, 1.6 line-height): all prose — descriptions, project summaries, form copy.
 - **Label** (400–500 JetBrains Mono): tags, category badges, dates, stats, code references. Small size, no case transform.
 
 ### Named Rules

@@ -7,7 +7,15 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
-    "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind"
+    "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",
+    "test:e2e": "playwright test",
+    "test:e2e:functional": "playwright test --grep @functional",
+    "test:e2e:a11y": "playwright test --grep @a11y",
+    "test:e2e:visual": "sh e2e/docker.sh --grep @visual",
+    "test:e2e:docker": "sh e2e/docker.sh",
+    "test:e2e:update": "sh e2e/docker.sh --update-snapshots=all",
+    "test:e2e:serve": "sh e2e/serve.sh",
+    "test:e2e:links": "playwright test -c playwright.external.config.ts"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -32,7 +40,9 @@
     "three": "^0.186.1"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.64.0",
     "@svgr/webpack": "^8.1.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
