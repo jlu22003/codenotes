@@ -18,7 +18,13 @@ http
     const url = new URL(req.url, `http://localhost:${PORT}`)
 
     if (req.method === 'POST' && url.pathname === '/emails') {
-      const email = JSON.parse(raw)
+      let email
+      try {
+        email = JSON.parse(raw)
+        if (typeof email.subject !== 'string') throw new Error('missing subject')
+      } catch {
+        return reply(res, 400, { error: 'expected a JSON body with a string subject' })
+      }
       sent.push(email)
       const index = queue.findIndex((queued) => email.subject.includes(queued.match))
       const next = index === -1 ? { status: 200, body: { id: 'fake-email-id' } } : queue.splice(index, 1)[0]
