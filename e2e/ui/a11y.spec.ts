@@ -7,15 +7,13 @@ test.describe('per-route', () => {
   test.use({ allowedErrors: [/Failed to fetch RSC payload|_rsc=.*due to access control checks|downloadable font: download failed/] })
 for (const route of routes) {
   test(`${route} has no serious axe violations`, { tag: '@a11y' }, async ({ page }) => {
+    test.setTimeout(90_000) // four navigations plus four axe runs
     const found: string[] = []
     for (const theme of ['light', 'dark']) {
       for (const viewport of [{ width: 390, height: 844 }, { width: 1280, height: 800 }]) {
         await page.setViewportSize(viewport)
         await page.addInitScript((t) => localStorage.setItem('theme', t), theme)
         await page.goto(route)
-        // Let late font downloads finish so the next navigation does not abort one (Firefox logs that as an error).
-        await page.waitForLoadState('networkidle')
-        await page.evaluate(() => document.fonts.ready)
         // Nextra's search <kbd> has transition-all; axe must not sample a colour mid-fade.
         await page.addStyleTag({ content: '*,*::before,*::after{transition:none!important;animation:none!important}' })
         const { violations } = await new AxeBuilder({ page }).analyze()
