@@ -100,23 +100,32 @@ test('sends the expected payload', { tag: '@functional' }, async ({ page }) => {
   expect(calls).toEqual([{ name: 'Ada Lovelace', email: 'ada@example.com', message: 'Hello' }])
 })
 
-test('keeps a value entered before hydration when another field is edited', { tag: '@functional' }, async ({ context }) => {
-  // Fresh page with the app's scripts held back, so the value is set while the
-  // form is still server-rendered, then React hydrates and a second field is edited.
-  const early = await context.newPage()
-  let release!: () => void
-  const gate = new Promise<void>((resolve) => (release = resolve))
-  await early.route('**/_next/static/**/*.js', async (route) => {
-    await gate
-    await route.continue()
+// beforeEach has already hydrated the page, so leaving it aborts in-flight link
+// prefetches; Firefox reports those as console errors. Allow only that message.
+test.describe('pre-hydration', () => {
+  test.use({ allowedErrors: [/Failed to fetch RSC payload/] })
+
+  test('keeps a value entered before hydration when another field is edited', { tag: '@functional' }, async ({ page }) => {
+    // Re-navigate with the app's scripts held back, so the value is set while the
+    // form is still server-rendered, then React hydrates and a second field is edited.
+    let release!: () => void
+    const gate = new Promise<void>((resolve) => (release = resolve))
+    await page.route('**/_next/static/**/*.js', async (route) => {
+      await gate
+      await route.continue()
+    })
+    // beforeEach already loaded this URL; leave it first so goto is a real load, not a hash change.
+    await page.goto('about:blank')
+    try {
+      await page.goto('/#contact-me', { waitUntil: 'commit' })
+      await page.locator('#firstName').evaluate((el: HTMLInputElement) => (el.value = 'Ada'))
+    } finally {
+      release()
+    }
+    await waitForHydratedForm(page)
+    await page.getByLabel('Last Name', { exact: true }).fill('Lovelace')
+    await expect(page.getByLabel('First Name', { exact: true })).toHaveValue('Ada')
   })
-  await early.goto('/#contact-me', { waitUntil: 'commit' })
-  await early.locator('#firstName').evaluate((el: HTMLInputElement) => (el.value = 'Ada'))
-  release()
-  await waitForHydratedForm(early)
-  await early.getByLabel('Last Name', { exact: true }).fill('Lovelace')
-  await expect(early.getByLabel('First Name', { exact: true })).toHaveValue('Ada')
-  await early.close()
 })
 
 test('disables the form while sending and sends once', { tag: '@functional' }, async ({ page }) => {
