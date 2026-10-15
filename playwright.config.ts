@@ -41,7 +41,8 @@ export default defineConfig({
       // Never reuse: a server started outside Playwright could be holding the
       // real RESEND_API_KEY from .env.local and send real email.
       reuseExistingServer: false,
-      timeout: 300_000,
+      // amd64 emulation on Apple silicon builds far slower than native.
+      timeout: process.env.E2E_DOCKER ? 1_200_000 : 300_000,
       // Real environment variables win over .env.local in Next.js.
       env: {
         RESEND_BASE_URL: `http://localhost:${RESEND_PORT}`,
