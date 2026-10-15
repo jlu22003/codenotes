@@ -1,4 +1,5 @@
-import { test, expect } from '../fixtures'
+import { test, expect, FAKE_RESEND } from '../fixtures'
+import type { APIRequestContext, TestInfo } from '@playwright/test'
 
 const valid = { name: 'Ada Lovelace', email: 'ada@example.com', message: 'Hello' }
 const FIELD_IN_RESPONSE = { name: 'firstName', email: 'email', message: 'message' } as const
@@ -49,3 +50,37 @@ for (const message of [123, ['x']]) {
     expect((await response.json()).field).toBe('message')
   })
 }
+
+const sender = (testInfo: TestInfo) => `Api ${testInfo.testId}-${testInfo.repeatEachIndex}`
+const sentTo = async (request: APIRequestContext, name: string) =>
+  (await request.get(`${FAKE_RESEND}/__sent?match=${encodeURIComponent(name)}`)).json()
+
+test('valid message is delivered to Resend', { tag: '@functional' }, async ({ request }, testInfo) => {
+  const name = sender(testInfo)
+  const response = await request.post('/api/contact', { data: { ...valid, name, message: 'x'.repeat(2000) } })
+  expect(response.status()).toBe(200)
+  const [email] = await sentTo(request, name)
+  expect(email.subject).toBe(`Portfolio Contact from ${name}`)
+  expect([email.reply_to, email.replyTo].flat()).toContain(valid.email)
+})
+
+test('Resend error is reported as a failure', { tag: '@functional' }, async ({ request }, testInfo) => {
+  // ⚠ expected bug #6: the SDK returns { error } instead of throwing and the route ignores it.
+  const name = sender(testInfo)
+  await request.post(`${FAKE_RESEND}/__next`, {
+    data: { match: name, status: 422, body: { name: 'validation_error', message: 'secret detail', statusCode: 422 } },
+  })
+  const response = await request.post('/api/contact', { data: { ...valid, name } })
+  expect(response.status()).toBe(500)
+  const body = await response.json()
+  expect(body).toEqual({ error: 'Failed to send message. Please try again.' })
+})
+
+test('message HTML is escaped in the email', { tag: '@functional' }, async ({ request }, testInfo) => {
+  // ⚠ expected bug #2: user input is interpolated into the HTML unescaped.
+  const name = sender(testInfo)
+  await request.post('/api/contact', { data: { ...valid, name, message: '<img src=x onerror=alert(1)>' } })
+  const [email] = await sentTo(request, name)
+  expect(email.html).not.toContain('<img src=x')
+  expect(email.html).toContain('&lt;img src=x')
+})
