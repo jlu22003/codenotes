@@ -21,7 +21,7 @@ const buttonVariants = cva(
         // dropping the dark-specific background override lets the
         // universal hover:bg-accent rule do that correctly.
         outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input",
+          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-border",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
