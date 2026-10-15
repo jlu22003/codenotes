@@ -9,5 +9,6 @@ exec docker run --rm --ipc=host --platform linux/amd64 \
   -v "codenotes-e2e-$(basename "$PWD")-amd64-next":/work/.next \
   -w /work \
   -e E2E_DOCKER=1 \
+  -e E2E_EMULATED=1 \
   mcr.microsoft.com/playwright:v1.64.0-noble \
   sh -c '[ node_modules/.package-lock.json -nt package-lock.json ] || npm ci; npx playwright test "$@"' -- "$@"

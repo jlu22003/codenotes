@@ -8,15 +8,15 @@ export default defineConfig({
   testDir: './e2e',
   testIgnore: ['**/external/**'],
   fullyParallel: true,
-  // amd64 emulation on Apple silicon is several times slower than native.
-  ...(process.env.E2E_DOCKER ? { timeout: 120_000, workers: 2 } : {}),
+  // Set only by e2e/docker.sh: amd64 emulation on Apple silicon is several times slower than native.
+  ...(process.env.E2E_EMULATED ? { timeout: 120_000, workers: 2 } : {}),
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
   grepInvert: process.env.E2E_DOCKER ? /@external/ : /@external|@visual/,
   snapshotPathTemplate: '{testDir}/__screenshots__/{projectName}/{testFilePath}/{arg}{ext}',
   expect: {
-    ...(process.env.E2E_DOCKER ? { timeout: 30_000 } : {}),
+    ...(process.env.E2E_EMULATED ? { timeout: 30_000 } : {}),
     toHaveScreenshot: { animations: 'disabled', caret: 'hide', maxDiffPixelRatio: 0.01 },
   },
   use: {
@@ -45,7 +45,7 @@ export default defineConfig({
       // real RESEND_API_KEY from .env.local and send real email.
       reuseExistingServer: false,
       // amd64 emulation on Apple silicon builds far slower than native.
-      timeout: process.env.E2E_DOCKER ? 1_200_000 : 300_000,
+      timeout: process.env.E2E_EMULATED ? 1_200_000 : 300_000,
       // Real environment variables win over .env.local in Next.js.
       env: {
         RESEND_BASE_URL: `http://localhost:${RESEND_PORT}`,
