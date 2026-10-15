@@ -118,3 +118,80 @@ test('keeps a value entered before hydration when another field is edited', { ta
   await expect(early.getByLabel('First Name', { exact: true })).toHaveValue('Ada')
   await early.close()
 })
+
+test('disables the form while sending and sends once', { tag: '@functional' }, async ({ page }) => {
+  let release!: () => void
+  const gate = new Promise<void>((resolve) => (release = resolve))
+  let calls = 0
+  await page.route('**/api/contact', async (route) => {
+    calls++
+    await gate
+    await route.fulfill({ json: { message: 'Message sent successfully' } })
+  })
+  await fill(page, valid)
+  const button = page.getByRole('button', { name: 'Submit Contact Form' })
+  await button.click()
+  await expect(button).toBeDisabled()
+  await expect(button).toHaveText('Sending...')
+  for (const label of FIELDS) await expect(page.getByLabel(label, { exact: true })).toBeDisabled()
+  await button.click({ force: true })
+  release()
+  await expect(page.getByRole('status')).toBeVisible()
+  expect(calls).toBe(1)
+})
+
+test('success message resets the form and clears after 5 seconds', { tag: '@functional' }, async ({ page }) => {
+  await page.clock.install()
+  await page.goto('/#contact-me')
+  await waitForHydratedForm(page)
+  await countApiCalls(page)
+  await fill(page, valid)
+  await submit(page)
+  await expect(page.getByRole('status')).toContainText('Message sent successfully!')
+  for (const label of FIELDS) await expect(page.getByLabel(label, { exact: true })).toHaveValue('')
+  await page.clock.fastForward(5000)
+  await expect(page.getByRole('status')).toHaveCount(0)
+})
+
+test.describe('failures', () => {
+  test.use({ allowedErrors: [/Contact form error/] })
+
+  test('server error keeps input and allows resubmitting', { tag: '@functional' }, async ({ page }) => {
+    let fail = true
+    await page.route('**/api/contact', (route) =>
+      fail
+        ? route.fulfill({ status: 500, json: { error: 'Failed to send message. Please try again.' } })
+        : route.fulfill({ json: { message: 'Message sent successfully' } }),
+    )
+    await fill(page, valid)
+    await submit(page)
+    await expect(contactAlert(page)).toContainText('Failed to send message. Please try again.')
+    await expect(page.getByLabel('Message', { exact: true })).toHaveValue('Hello')
+    fail = false
+    await submit(page)
+    await expect(page.getByRole('status')).toContainText('Message sent successfully!')
+  })
+
+  test('network failure shows an error and keeps input', { tag: '@functional' }, async ({ page }) => {
+    await page.route('**/api/contact', (route) => route.abort('failed'))
+    await fill(page, valid)
+    await submit(page)
+    await expect(contactAlert(page)).toContainText('Failed to send message')
+    await expect(page.getByLabel('Email', { exact: true })).toHaveValue('ada@example.com')
+  })
+})
+
+test('can be completed with the keyboard alone', { tag: '@functional' }, async ({ page, browserName }) => {
+  // macOS WebKit's Tab skips buttons by default; Alt+Tab is its "focus any control" key.
+  const tab = browserName === 'webkit' ? 'Alt+Tab' : 'Tab'
+  const calls = await countApiCalls(page)
+  await page.getByLabel('First Name', { exact: true }).focus()
+  for (const value of ['Ada', 'Lovelace', 'ada@example.com', 'Hello']) {
+    await page.keyboard.type(value)
+    await page.keyboard.press(tab)
+  }
+  await expect(page.getByRole('button', { name: 'Submit Contact Form' })).toBeFocused()
+  await page.keyboard.press('Enter')
+  await expect(page.getByRole('status')).toBeVisible()
+  expect(calls).toHaveLength(1)
+})
