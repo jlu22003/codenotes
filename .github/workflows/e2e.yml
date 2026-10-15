@@ -2,23 +2,25 @@ name: e2e
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, labeled]
     paths-ignore: ['docs/**', '**/*.md', '.impeccable/**']
   push:
     branches: [main]
     paths-ignore: ['docs/**', '**/*.md', '.impeccable/**']
-  # Manual only: regenerates the Chromium visual baselines (see update-snapshots).
+  # Manual dispatch, or the update-snapshots PR label: regenerates the Chromium
+  # visual baselines (see update-snapshots).
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: e2e-${{ github.ref }}
+  group: e2e-${{ github.ref }}-${{ github.event.action == 'labeled' && 'snapshots' || 'test' }}
   cancel-in-progress: true
 
 jobs:
   test:
-    if: github.event_name != 'workflow_dispatch'
+    if: github.event_name != 'workflow_dispatch' && github.event.action != 'labeled'
     name: ${{ matrix.browser }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -45,11 +47,13 @@ jobs:
             test-results/
           retention-days: 7
 
-  # Manual only. Never runs on push or PR. Downloads the new baselines as an
-  # artifact; commit them to e2e/__screenshots__ by hand. Native amd64, so no
-  # E2E_EMULATED (that is only set by e2e/docker.sh).
+  # Runs on manual dispatch, or when the update-snapshots label is added to a PR
+  # (remove and re-add it to re-run). Never runs on plain push or PR events.
+  # Downloads the new baselines as an artifact; commit them to
+  # e2e/__screenshots__ by hand. Native amd64, so no E2E_EMULATED (that is only
+  # set by e2e/docker.sh).
   update-snapshots:
-    if: github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' || (github.event.action == 'labeled' && github.event.label.name == 'update-snapshots')
     name: update-snapshots
     runs-on: ubuntu-latest
     timeout-minutes: 20
