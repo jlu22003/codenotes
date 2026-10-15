@@ -1,0 +1,23 @@
+name: links
+
+on:
+  schedule:
+    - cron: '0 13 * * 1' # Mondays 09:00 New York (EDT)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  links:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.0-noble
+      options: --ipc=host
+    env:
+      HOME: /root
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci
+      - run: npm run test:e2e:links
