@@ -2,6 +2,14 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
 export async function POST(request: Request) {
   let body: Record<string, unknown>;
   try {
@@ -89,10 +97,10 @@ export async function POST(request: Request) {
       subject: `Portfolio Contact from ${name}`,
       html: `
         <h2>New Contact Form Submission</h2>
-        <p><strong>From:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>From:</strong> ${escapeHtml(name)}</p>
+        <p><strong>Email:</strong> ${escapeHtml(email)}</p>
         <p><strong>Message:</strong></p>
-        <p>${message.replace(/\n/g, '<br>')}</p>
+        <p>${escapeHtml(message).replace(/\n/g, '<br>')}</p>
       `,
     });
 
