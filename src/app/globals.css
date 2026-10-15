@@ -233,3 +233,5 @@
     background-color: oklch(0.22 0 0);
   }
 }
+
+@custom-variant dark (&:where(.dark, .dark *));
