@@ -25,12 +25,15 @@ async function settle(page: Page, route: string, theme: 'light' | 'dark') {
     images.forEach((img) => (img.loading = 'eager'))
     await Promise.all(images.map((img) => img.decode().catch(() => undefined)))
   })
+  await page.addStyleTag({ content: HIDE_SPHERE })
 }
+
+// The animated sphere fills the hero, so it is hidden rather than masked to keep the hero text in the comparison.
+const HIDE_SPHERE = '#particle-sphere-background { visibility: hidden !important; }'
 
 const dynamic = (page: Page) => [
   page.getByRole('contentinfo'), // copyright year
   page.locator('time'), // "Last updated on"
-  page.locator('#particle-sphere-background'),
   page.locator('#latest-blog-heading + p'), // post date
 ]
 
