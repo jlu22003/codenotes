@@ -17,8 +17,13 @@ test.describe('per-route', () => {
         test.setTimeout(90_000) // four navigations plus four axe runs
         const found: string[] = []
         for (const theme of ['light', 'dark']) {
-          await page.addInitScript((t) => localStorage.setItem('theme', t), theme)
+          // about:blank has no storage (SecurityError), and the init script runs there too.
+          await page.addInitScript((t) => { if (location.protocol !== 'about:') localStorage.setItem('theme', t) }, theme)
           for (const viewport of [{ width: 390, height: 844 }, { width: 1280, height: 800 }]) {
+            // Resizing a loaded page makes it request a larger next/image width, and the goto below cancels that
+            // request mid-optimisation. Next 15's image optimiser then never answers any later request for the
+            // same URL (the next goto hangs on `load`), so leave the page before resizing.
+            await page.goto('about:blank')
             await page.setViewportSize(viewport)
             await page.goto(route)
             // Nextra's search <kbd> has transition-all; axe must not sample a colour mid-fade.
