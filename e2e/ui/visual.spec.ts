@@ -19,6 +19,9 @@ const VIEWPORTS = {
 async function settle(page: Page, route: string, theme: 'light' | 'dark') {
   await page.addInitScript((t) => localStorage.setItem('theme', t), theme)
   await page.goto(route)
+  // Skills renders a marquee first and swaps to a taller wrapped list once it reads prefers-reduced-motion
+  // after hydration (every shot here uses reducedMotion), so the page height is not final until it is gone.
+  await expect(page.getByRole('group', { name: /Focus to pause/ })).toHaveCount(0)
   await page.evaluate(async () => {
     await document.fonts.ready
     const images = Array.from(document.images)
