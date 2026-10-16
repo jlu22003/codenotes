@@ -218,7 +218,7 @@ export default function Contact() {
                     aria-describedby={fieldErrors.firstName ? "firstName-error" : undefined}
                   />
                   {fieldErrors.firstName && (
-                    <p id="firstName-error" className="text-sm text-destructive">
+                    <p id="firstName-error" className="text-sm text-foreground">
                       {fieldErrors.firstName}
                     </p>
                   )}

@@ -9,7 +9,7 @@
    established type system (Montserrat/Arial/JetBrains Mono), not the
    stock theme's handwriting font (Architects Daughter) and Fira Code. */
 :root {
-  --background: oklch(0.9821 0 0);
+  --background: oklch(0.95 0 0);
   --foreground: oklch(0.3485 0 0);
   --card: oklch(1.0000 0 0);
   --card-foreground: oklch(0.3485 0 0);
