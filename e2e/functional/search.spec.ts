@@ -14,14 +14,12 @@ const query = title.slice(0, 4).toLowerCase() // partial and different case
 // assertion timeout, so these first-result assertions get extra headroom.
 const SEARCH_TIMEOUT = 15_000
 
-// The search box is server-rendered before React hydrates it, and text typed in that
-// window can be discarded when hydration mounts. Wait for React to have attached to the
-// input (the same signal contact-form.spec.ts uses), then fill once with no retry.
+// The search box is server-rendered before React hydrates it. Nextra's kbd hint only
+// appears after its mount effects have run, and headlessui's input clears its value on
+// mount, so filling before that loses the text. Wait for the hint, then fill once.
 async function searchFor(page: Page, value: string) {
   const input = page.getByRole('combobox', { name: 'Search...' })
-  await expect
-    .poll(() => input.evaluate((el) => Object.keys(el).some((key) => key.startsWith('__reactProps$'))))
-    .toBe(true)
+  await expect(page.locator('.nextra-search kbd').first()).toBeVisible()
   await input.fill(value)
   await expect(input).toHaveValue(value)
 }
@@ -48,6 +46,7 @@ test('works from the keyboard', { tag: '@functional' }, async ({ page }) => {
   // Windows UA (only Desktop Safari reports Mac), so `ControlOrMeta` — which
   // resolves off the actual host OS — sends the wrong modifier on those two.
   // Mirror the product's own check instead of assuming a host-OS modifier.
+  await expect(page.locator('.nextra-search kbd').first()).toBeVisible()
   const isMac = await page.evaluate(() => navigator.userAgent.includes('Mac'))
   await page.keyboard.press(isMac ? 'Meta+k' : 'Control+k')
   await expect(page.getByRole('combobox', { name: 'Search...' })).toBeFocused()
