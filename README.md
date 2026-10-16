@@ -95,7 +95,12 @@ public/
 
 ## Deployment
 
-Any host that runs `npm run build` and serves Next.js works. The build step must include `postbuild`, which `npm run build` runs automatically, or search will return no results. Set `RESEND_API_KEY` in the host's environment settings.
+The live site is deployed on [Vercel](https://vercel.com/). Pushing to `main` deploys to production.
+
+- **Build command:** `npm run build`. This also runs `postbuild`, which generates the search index; without it, search returns no results.
+- **Environment variable:** set `RESEND_API_KEY` in the Vercel project settings for the contact form.
+
+Any other host that runs `npm run build` and serves Next.js works the same way.
 
 ## Further reading
 
