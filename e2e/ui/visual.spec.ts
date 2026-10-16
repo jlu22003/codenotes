@@ -3,7 +3,7 @@ import type { Page } from '@playwright/test'
 import { latestPost, pages, sidebarTitles } from '../content'
 
 test.skip(({ browserName }) => browserName !== 'chromium', 'Visual baselines are Chromium-only')
-test.skip(!process.env.E2E_DOCKER, 'Baselines are Linux-only: run npm run test:e2e:docker')
+test.skip(!process.env.E2E_DOCKER, 'Baselines are linux/amd64-only: run in CI or npm run test:e2e:visual')
 test.use({ reducedMotion: 'reduce' })
 
 // Index 0 is "All Projects"; the first real project is index 1.
