@@ -17,7 +17,16 @@ export default defineConfig({
   snapshotPathTemplate: '{testDir}/__screenshots__/{projectName}/{testFilePath}/{arg}{ext}',
   expect: {
     ...(process.env.E2E_EMULATED ? { timeout: 30_000 } : {}),
-    toHaveScreenshot: { animations: 'disabled', caret: 'hide', maxDiffPixelRatio: 0.01 },
+    toHaveScreenshot: {
+      animations: 'disabled',
+      caret: 'hide',
+      // Strict on purpose. threshold is the per-pixel YIQ distance (max 35215 * threshold^2):
+      // the default 0.2 allows 1408, so a light --background shift (250 -> 238, distance ~61)
+      // passed; 0.02 allows ~14. maxDiffPixels replaces the 1% ratio, which on a 1920x5000 page
+      // is ~96,000 pixels, enough to hide a recoloured error message (a few hundred pixels).
+      threshold: 0.02,
+      maxDiffPixels: 100,
+    },
   },
   use: {
     baseURL,
