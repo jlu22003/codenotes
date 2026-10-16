@@ -2,30 +2,43 @@ import AxeBuilder from '@axe-core/playwright'
 import { test, expect } from '../fixtures'
 import { routes } from '../content'
 
-test.describe('per-route', () => {
-  // Navigating away aborts Next.js RSC prefetches (Firefox/WebKit) and in-flight font downloads (Firefox).
-  test.use({ allowedErrors: [/Failed to fetch RSC payload|_rsc=.*due to access control checks|downloadable font: download failed/] })
-for (const route of routes) {
-  test(`${route} has no serious axe violations`, { tag: '@a11y' }, async ({ page }) => {
-    test.setTimeout(90_000) // four navigations plus four axe runs
-    const found: string[] = []
-    for (const theme of ['light', 'dark']) {
-      for (const viewport of [{ width: 390, height: 844 }, { width: 1280, height: 800 }]) {
-        await page.setViewportSize(viewport)
-        await page.addInitScript((t) => localStorage.setItem('theme', t), theme)
-        await page.goto(route)
-        // Nextra's search <kbd> has transition-all; axe must not sample a colour mid-fade.
-        await page.addStyleTag({ content: '*,*::before,*::after{transition:none!important;animation:none!important}' })
-        const { violations } = await new AxeBuilder({ page }).analyze()
-        for (const v of violations.filter((v) => v.impact === 'serious' || v.impact === 'critical')) {
-          found.push(`${theme} ${viewport.width}px ${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`)
-        }
-      }
-    }
-    expect(found).toEqual([])
-  })
+// Navigating away aborts Next.js RSC prefetches (Firefox/WebKit).
+const RSC_ABORTED = 'Failed to fetch RSC payload|_rsc=.*due to access control checks'
 
-  test(`${route} has one h1, ordered headings and landmarks`, { tag: '@a11y' }, async ({ page }) => {
+test.describe('per-route', () => {
+  test.use({ allowedErrors: [new RegExp(RSC_ABORTED)] })
+
+  for (const route of routes) {
+    // The axe loop navigates four times, which also aborts in-flight font downloads (Firefox).
+    test.describe('axe', () => {
+      test.use({ allowedErrors: [new RegExp(`${RSC_ABORTED}|downloadable font: download failed`)] })
+
+      test(`${route} has no serious axe violations`, { tag: '@a11y' }, async ({ page }) => {
+        test.setTimeout(90_000) // four navigations plus four axe runs
+        const found: string[] = []
+        for (const theme of ['light', 'dark']) {
+          // about:blank has no storage (SecurityError), and the init script runs there too.
+          await page.addInitScript((t) => { if (location.protocol !== 'about:') localStorage.setItem('theme', t) }, theme)
+          for (const viewport of [{ width: 390, height: 844 }, { width: 1280, height: 800 }]) {
+            // Resizing a loaded page makes it request a larger next/image width, and the goto below cancels that
+            // request mid-optimisation. Next 15's image optimiser then never answers any later request for the
+            // same URL (the next goto hangs on `load`), so leave the page before resizing.
+            await page.goto('about:blank')
+            await page.setViewportSize(viewport)
+            await page.goto(route)
+            // Nextra's search <kbd> has transition-all; axe must not sample a colour mid-fade.
+            await page.addStyleTag({ content: '*,*::before,*::after{transition:none!important;animation:none!important}' })
+            const { violations } = await new AxeBuilder({ page }).analyze()
+            for (const v of violations.filter((v) => v.impact === 'serious' || v.impact === 'critical')) {
+              found.push(`${theme} ${viewport.width}px ${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(', ')}`)
+            }
+          }
+        }
+        expect(found).toEqual([])
+      })
+    })
+
+    test(`${route} has one h1, ordered headings and landmarks`, { tag: '@a11y' }, async ({ page }) => {
     await page.goto(route)
     await expect(page.locator('h1')).toHaveCount(1)
     const levels = await page.locator('main :is(h1,h2,h3,h4,h5,h6)').evaluateAll((hs) => hs.map((h) => Number(h.tagName[1])))
@@ -48,15 +61,25 @@ test('keyboard reaches key controls with a visible focus ring', { tag: '@a11y' }
   const noRing: string[] = []
   for (let i = 0; i < 60; i++) {
     await page.keyboard.press('Tab')
-    const info = await page.evaluate(() => {
+    const info = await page.evaluate(async () => {
       const el = document.activeElement as HTMLElement
       if (el === document.body) return null // Tab wrapped past the last control
-      const style = getComputedStyle(el)
       const name = el.getAttribute('aria-label') ?? el.textContent?.trim().slice(0, 40) ?? el.tagName
-      // Tailwind's reset leaves `rgba(0, 0, 0, 0) 0px 0px 0px 0px`, which is not a ring.
-      const shadow = style.boxShadow.replace(/rgba\([^)]*,\s*0\)|transparent|none|inset|0px|[\s,]/g, '')
-      const outline = style.outlineStyle !== 'none' && parseFloat(style.outlineWidth) > 0
-      return { name, ring: outline || shadow !== '' }
+      // A ring is a focus-only change. Resting shadows (shadcn's shadow-xs) must not count, so compare
+      // the focused style with the same element blurred.
+      const look = () => {
+        const style = getComputedStyle(el)
+        // Width and colour mean nothing while the outline style is none.
+        const outline = style.outlineStyle === 'none' ? 'none' : [style.outlineStyle, style.outlineWidth, style.outlineColor].join(' ')
+        return `${outline}|${style.boxShadow}`
+      }
+      const focused = look()
+      el.blur()
+      // Let style settle: some controls ease their ring out, and an immediate read still sees it.
+      await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+      const blurred = look()
+      el.focus() // keep the Tab sequence going from this element
+      return { name, ring: focused !== blurred }
     })
     if (!info) continue
     reached.push(info.name)

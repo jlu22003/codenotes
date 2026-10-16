@@ -14,16 +14,14 @@ const query = title.slice(0, 4).toLowerCase() // partial and different case
 // assertion timeout, so these first-result assertions get extra headroom.
 const SEARCH_TIMEOUT = 15_000
 
-// The search box is server-rendered before React hydrates it. A fill() that
-// lands in that window can be silently discarded when hydration mounts and
-// resets the controlled input back to its initial (empty) value — same race
-// documented in contact-form.spec.ts's safeFill. Retry until it sticks.
+// The search box is server-rendered before React hydrates it. Nextra's kbd hint only
+// appears after its mount effects have run, and headlessui's input clears its value on
+// mount, so filling before that loses the text. Wait for the hint, then fill once.
 async function searchFor(page: Page, value: string) {
   const input = page.getByRole('combobox', { name: 'Search...' })
-  await expect(async () => {
-    await input.fill(value)
-    await expect(input).toHaveValue(value)
-  }).toPass()
+  await expect(page.locator('.nextra-search kbd').first()).toBeVisible()
+  await input.fill(value)
+  await expect(input).toHaveValue(value)
 }
 
 test('finds a project by partial, case-insensitive title', { tag: '@functional' }, async ({ page }) => {
@@ -48,6 +46,7 @@ test('works from the keyboard', { tag: '@functional' }, async ({ page }) => {
   // Windows UA (only Desktop Safari reports Mac), so `ControlOrMeta` — which
   // resolves off the actual host OS — sends the wrong modifier on those two.
   // Mirror the product's own check instead of assuming a host-OS modifier.
+  await expect(page.locator('.nextra-search kbd').first()).toBeVisible()
   const isMac = await page.evaluate(() => navigator.userAgent.includes('Mac'))
   await page.keyboard.press(isMac ? 'Meta+k' : 'Control+k')
   await expect(page.getByRole('combobox', { name: 'Search...' })).toBeFocused()
@@ -55,5 +54,5 @@ test('works from the keyboard', { tag: '@functional' }, async ({ page }) => {
   await expect(page.getByRole('option').first()).toBeVisible({ timeout: SEARCH_TIMEOUT })
   await page.keyboard.press('ArrowDown')
   await page.keyboard.press('Enter')
-  await expect(page).not.toHaveURL('/')
+  await expect(page).toHaveURL(new RegExp(`${route}(#.*)?$`))
 })
