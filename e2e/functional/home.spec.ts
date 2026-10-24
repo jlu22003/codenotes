@@ -1,6 +1,6 @@
 import { test, expect } from '../fixtures'
 import { latestPost } from '../content'
-import { projects } from '../../src/components/sections/Projects-Data'
+import { projects } from '../../src/components/projects/Projects-Data'
 
 test('sections appear in order', { tag: '@functional' }, async ({ page }) => {
   await page.goto('/')

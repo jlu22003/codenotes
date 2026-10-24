@@ -1,8 +1,6 @@
-// components/ui/ProjectContactCTA.tsx
-// None of the 6 project write-ups ended with any path back to Contact —
-// the page just stopped after Impact, right at the moment a convinced
-// reader is most likely to act. Routes to the homepage's real contact
-// form (/#contact-me), not a new one.
+// components/projects/ProjectContactCTA.tsx
+// Closing call to action on each project write-up, pointing to the
+// homepage contact form (/#contact-me).
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 

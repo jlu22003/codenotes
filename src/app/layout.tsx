@@ -4,9 +4,9 @@ import { Head, Search } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
 import 'nextra-theme-docs/style.css'
 import { Montserrat, JetBrains_Mono } from 'next/font/google'
-import AccessibilityPatches from '@/components/ui/AcessibilityPatches';
+import AccessibilityPatches from '@/components/ui/AccessibilityPatches';
 import StatusLine from '@/components/ui/StatusLine';
-import TocTechStack from '@/components/ui/TocTechStack';
+import TocTechStack from '@/components/projects/TocTechStack';
 
 // Configure Montserrat for headings
 const montserrat = Montserrat({

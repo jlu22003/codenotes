@@ -9,19 +9,15 @@ export default function ResumeDownloadButton() {
   const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
-    // Hidden while any card/carousel-heavy section actually occupies the
-    // button's own bottom-right corner — confirmed via elementFromPoint
-    // testing that this floating button was overlapping and intercepting
-    // real clicks on Projects cards and Skills marquee content.
+    // Hidden while an interactive section occupies the button's
+    // bottom-right corner, so the floating button never intercepts clicks
+    // on Projects cards or Skills marquee content.
     //
-    // rootMargin shrinks the effective viewport to just that bottom strip
-    // (instead of "anywhere on screen"), so a tall section only counts as
-    // intersecting while it's genuinely near the button — not for its
-    // entire scroll duration, which was hiding the button for ~90% of the
-    // page (including sections like Focus that never overlapped it).
-    // threshold: 0 because the button-corner strip is far smaller than any
-    // section's own height, so a percentage-of-target threshold would
-    // almost never fire — any overlap with that strip is what matters here.
+    // rootMargin shrinks the effective viewport to just that bottom strip,
+    // so a tall section only counts as intersecting while it's actually
+    // near the button, not for its whole scroll duration.
+    // threshold: 0 because the strip is far smaller than any section, so a
+    // percentage-of-target threshold would almost never fire.
     const sectionIds = ["projects", "skills", "contact-me"];
     const sections = sectionIds
       .map((id) => document.getElementById(id))

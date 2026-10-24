@@ -265,7 +265,7 @@ Viewports: **390×844** (phone), **768×1024** (tablet), **1280×800** (laptop),
 | Images | Every content image has `alt`; decorative SVGs are `aria-hidden` | ⬜ |
 | Live regions | The contact form's success and error messages are announced (`role="status"` / `role="alert"`) | ⬜ |
 | Reduced motion | Nothing moves on its own when `reducedMotion: 'reduce'` is set | ⬜ |
-| `AccessibilityPatches` | Whatever `src/components/ui/AcessibilityPatches.tsx` patches is actually present in the DOM | ⬜ |
+| `AccessibilityPatches` | Whatever `src/components/ui/AccessibilityPatches.tsx` patches is actually present in the DOM | ⬜ |
 
 ### 4.5 Cross-browser
 

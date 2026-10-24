@@ -1,4 +1,4 @@
-// components/sections/projects-data.ts
+// components/projects/Projects-Data.ts
 export interface Project {
   id: string;
   title: string;
@@ -11,13 +11,14 @@ export interface Project {
   // single captures of external sites, not theme-aware.
   imageDark?: string;
   category: string;
+  // Shown as chips under the "On This Page" TOC on the project's page.
+  tech: string[];
+  plannedUpdates?: string[];
 }
 
 // Shared placeholder until each project has a real screenshot. Exported so
-// the card component can detect it and visually mark it as a placeholder
-// instead of letting it pass for a real screenshot. Self-hosted rather than
-// pulled from a third-party demo-block CDN — it backed 4 of 6 project cards,
-// a single point of failure outside this project's control.
+// ProjectImage can mark it as "Screenshot pending". Self-hosted so project
+// cards don't depend on a third-party CDN.
 export const PLACEHOLDER_IMAGE = "/images/placeholder-project.svg";
 
 export const projects: Project[] = [
@@ -27,6 +28,7 @@ export const projects: Project[] = [
     summary:
       "Architected an AI-assisted Shopify theme workflow with custom Liquid components, giving the client independent control over product updates.",
     url: "/projects/laylocafe",
+    tech: ["Shopify", "Liquid", "21st.dev MCP", "Higgsfield MCP", "Impeccable"],
     image: "/images/projects/laylocafe.png",
     category: "Client Project",
   },
@@ -36,6 +38,7 @@ export const projects: Project[] = [
     summary:
       "Took ownership of an in-progress WordPress project as a contractor, maintaining site stability and managing delivery independently.",
     url: "/projects/boycott1902",
+    tech: ["WordPress"],
     image: "/images/projects/boycott1902.png",
     category: "Client Project",
   },
@@ -45,6 +48,7 @@ export const projects: Project[] = [
     summary:
       "A playable Unity/C# fighting game prototype shipped in 48 hours at Global Game Jam 2026, with enemy AI and progression systems.",
     url: "/projects/maskimumcarnage",
+    tech: ["Unity", "C#"],
     image: "/images/projects/maskimumcarnage.png",
     category: "Game Jam",
   },
@@ -54,6 +58,7 @@ export const projects: Project[] = [
     summary:
       "Designed and shipped a client website end-to-end in WordPress, from stakeholder requirements to full ownership transition.",
     url: "/projects/equaljusticestudios",
+    tech: ["WordPress"],
     image: PLACEHOLDER_IMAGE,
     category: "Client Project",
   },
@@ -63,6 +68,8 @@ export const projects: Project[] = [
     summary:
       "A modular Next.js portfolio built with App Router and reusable React components, showcasing projects, skills, and blog posts.",
     url: "/projects/personalportfolio",
+    tech: ["Next.js", "React", "Tailwind CSS", "JavaScript", "HTML5", "CSS3"],
+    plannedUpdates: ["Portfolio Page Updates", "Contact Section Updates"],
     image: "/images/projects/personalportfolio.png",
     imageDark: "/images/projects/personalportfolio-dark.png",
     category: "Personal Project",
@@ -73,6 +80,7 @@ export const projects: Project[] = [
     summary:
       "A C-based game engine using bitmap board representation to push win-condition checks toward constant-time complexity.",
     url: "/projects/tictactoe",
+    tech: ["C"],
     image: PLACEHOLDER_IMAGE,
     category: "Personal Project",
   },

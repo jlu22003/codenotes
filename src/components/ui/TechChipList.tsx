@@ -1,18 +1,19 @@
 // components/ui/TechChipList.tsx
-// DESIGN.md's Mono-for-Facts rule already governs tech-stack tags
-// elsewhere (the TOC sidebar on project pages), but the Skills page
-// listed the same category of fact as plain comma-separated prose.
-// Reuses the existing Badge/outline pattern rather than inventing a new one.
-//
-// No label prop: each chip group now sits under a real MDX ## heading
-// instead of a styled <p>, so it participates in Nextra's heading-driven
-// spacing and TOC — previously Skills had no sub-headings at all, so it
-// got none of the generous section rhythm the Experience page has.
+// Tech-stack tags as mono outline badges (DESIGN.md's Mono-for-Facts rule).
+// No label prop: put each list under an MDX ## heading so it gets Nextra's
+// section spacing and a TOC entry.
+import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
-export default function TechChipList({ items }: { items: string[] }) {
+export default function TechChipList({
+  items,
+  className,
+}: {
+  items: string[];
+  className?: string;
+}) {
   return (
-    <div className="mb-6 flex max-w-[75ch] flex-wrap gap-2">
+    <div className={cn("mb-6 flex max-w-[75ch] flex-wrap gap-2", className)}>
       {items.map((item) => (
         <Badge key={item} variant="outline" className="font-mono">
           {item}

@@ -1727,7 +1727,7 @@ Live regions are covered by Task 10/11 (`role="status"` / `role="alert"`), and r
 | `Focus.tsx`: add `<h1 className="sr-only">x</h1>` | `/` h1 count: Expected 1, Received 2 |
 | `Contact.tsx`: remove `aria-label="Submit Contact Form"` | keyboard: `Submit Contact Form` not reached (-1) |
 | `globals.css`: `*:focus-visible { outline: none !important; box-shadow: none !important; }` | `noRing` not empty |
-| `AcessibilityPatches.tsx`: comment out `btn.style.minHeight = '48px'` | patches: below 48 |
+| `AccessibilityPatches.tsx`: comment out `btn.style.minHeight = '48px'` | patches: below 48 |
 
 Expected on the unbroken site: `/` axe fails (⚠ #1). Follow the Bug Protocol. The fix is already known: `text-accent-foreground/70` → a token that reaches ≥4.5:1. Run axe after the fix to confirm it passes.
 
