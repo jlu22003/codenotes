@@ -96,11 +96,25 @@ test('focus rings', { tag: '@visual' }, async ({ page }) => {
     await target.focus()
     await page.keyboard.press('Shift+Tab')
     await page.keyboard.press('Tab') // keyboard focus, so :focus-visible applies
-    // Padded clip: the focus ring is drawn outside the element's box, so an element-only crop hides it.
-    const box = (await target.boundingBox())!
-    const pad = 8
+    const wrapperId = `focus-screenshot-${name}`
+    await target.evaluate((element, id) => {
+      const wrapper = document.createElement('span')
+      wrapper.dataset.focusScreenshot = id
+      wrapper.style.cssText = 'position: fixed; top: 8px; left: 8px; display: inline-block; padding: 8px; line-height: 0; background: transparent; z-index: 2147483647;'
+      element.parentElement!.insertBefore(wrapper, element)
+      wrapper.appendChild(element)
+    }, wrapperId)
+    const wrapper = page.locator(`[data-focus-screenshot="${wrapperId}"]`)
+    const box = (await wrapper.boundingBox())!
     await expect(page).toHaveScreenshot(`focus-${name}.png`, {
-      clip: { x: box.x - pad, y: box.y - pad, width: box.width + 2 * pad, height: box.height + 2 * pad },
+      animations: 'disabled',
+      clip: { x: 0, y: 0, width: box.width + 16, height: box.height + 16 },
+      scale: 'css',
     })
+    await page.locator(`[data-focus-screenshot="${wrapperId}"]`).evaluate((wrapper) => {
+      const element = wrapper.firstElementChild!
+      wrapper.parentElement!.insertBefore(element, wrapper)
+      wrapper.remove()
+    }).catch(() => undefined)
   }
 })

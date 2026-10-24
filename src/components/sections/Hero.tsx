@@ -14,7 +14,7 @@ export default function Hero() {
         // Nextra CSS variable (confirmed absent from the installed package),
         // and the homepage explicitly disables breadcrumb anyway — subtracting
         // it was silently shrinking Hero by a phantom 48px on every load.
-        height: `calc(100dvh - var(--nextra-navbar-height, 64px) - ${STATUS_LINE_HEIGHT_PX}px)`,
+        height: `calc(100dvh - 64px - ${STATUS_LINE_HEIGHT_PX}px)`,
         // Floor so short viewports (landscape phones) can't shrink the
         // section below what the heading/subtitle/buttons actually need —
         // the section scrolls a little instead of the content overrunning it.
