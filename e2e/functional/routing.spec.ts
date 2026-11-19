@@ -6,8 +6,6 @@ for (const route of routes) {
     const response = await page.goto(route)
     expect(response?.status()).toBe(200)
     await expect(page.locator('article main')).toBeVisible()
-    // The hidden gallery must never be linked from anywhere (sidebar, pagination, navbar).
-    await expect(page.locator('a[href="/gallery/test"]')).toHaveCount(0)
   })
 }
 

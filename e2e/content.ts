@@ -2,7 +2,6 @@ import fs from 'node:fs'
 import path from 'node:path'
 import rootMeta from '../src/content/_meta.js'
 import blogMeta from '../src/content/blog/_meta.js'
-import galleryMeta from '../src/content/gallery/_meta.js'
 import portfolioMeta from '../src/content/portfolio/_meta.js'
 import projectsMeta from '../src/content/projects/_meta.js'
 
@@ -12,7 +11,6 @@ type Meta = Record<string, MetaEntry>
 const CONTENT_DIR = path.join(__dirname, '../src/content')
 const metas: Record<string, Meta> = {
   blog: blogMeta,
-  gallery: galleryMeta,
   portfolio: portfolioMeta,
   projects: projectsMeta,
 }

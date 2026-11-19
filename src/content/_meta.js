@@ -7,18 +7,6 @@ const meta = {
     title: "Projects",
     type: "page",
   },
-  gallery: {
-    display: "hidden",
-    // Hidden from the sidebar, but Nextra's prev/next pagination walks the
-    // full page tree regardless of display:hidden — without this, this
-    // unfinished test page ("these are not my photos, just an initial
-    // implementation") was leaking into the Blog post's pagination footer
-    // as "Photo Album," exposing it to real visitors via a path the
-    // sidebar was deliberately built to hide.
-    theme: {
-      pagination: false,
-    },
-  },
   index: {
     display: "hidden",
     theme: {
