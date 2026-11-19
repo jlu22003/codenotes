@@ -150,7 +150,7 @@ Check these against the code during brainstorming; if any are wrong, fix this se
 | Unknown route returns 404 | Deep unknown path (`/projects/nope/nope`); trailing slash on a real route | 🟡 |
 | `/gallery` is reachable but hidden | Not in the sidebar; no prev/next footer; never shown as "Photo Album" in the blog pagination footer | ⬜ |
 | No console errors or hydration warnings | Fail on `console.error` as well as `pageerror` | ⬜ |
-| Metadata | `<title>`, `description`, and OpenGraph tags present on `/` | ⬜ |
+| Metadata | `<title>`, `description`, and OpenGraph tags present on `/` | ✅ (`metadata.spec.ts`) |
 
 ### 3.2 Navigation
 
