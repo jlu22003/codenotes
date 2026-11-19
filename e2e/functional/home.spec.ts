@@ -284,3 +284,68 @@ test.describe('hero particle sphere', () => {
     })
   })
 })
+
+// Three.js sets window.__THREE__ to its revision when its module evaluates, so it marks the chunk having loaded.
+const threeLoaded = (page: import('@playwright/test').Page) =>
+  page.evaluate(() => (window as Window & { __THREE__?: string }).__THREE__ !== undefined)
+
+test('Three.js loads on the home page only', { tag: '@functional' }, async ({ page }) => {
+  await page.goto('/')
+  await expect.poll(() => threeLoaded(page)).toBe(true)
+  for (const route of ['/blog', latestPost!.route, '/projects', '/portfolio/about']) {
+    await page.goto(route, { waitUntil: 'networkidle' })
+    expect(await threeLoaded(page), route).toBe(false)
+  }
+})
+
+test('hero render loop pauses off-screen and on a hidden tab', { tag: '@functional' }, async ({ page }) => {
+  await page.addInitScript(() => {
+    const w = window as Window & { __draws?: number }
+    w.__draws = 0
+    for (const Context of [window.WebGLRenderingContext, window.WebGL2RenderingContext]) {
+      if (!Context) continue
+      for (const method of ['drawArrays', 'drawElements'] as const) {
+        const original = Context.prototype[method] as (...args: unknown[]) => void
+        Object.defineProperty(Context.prototype, method, {
+          value(this: unknown, ...args: unknown[]) {
+            w.__draws!++
+            return original.apply(this, args)
+          },
+        })
+      }
+    }
+  })
+  await page.goto('/')
+  const hasWebGL = await page.evaluate(() => !!document.createElement('canvas').getContext('webgl'))
+  test.skip(!hasWebGL, 'no WebGL in this browser, so the site correctly renders no sphere')
+  await expect(page.locator('#particle-sphere-background canvas')).toBeVisible()
+
+  const draws = () => page.evaluate(() => (window as Window & { __draws?: number }).__draws ?? 0)
+  const expectRunning = async () => {
+    const start = await draws()
+    await expect.poll(draws).toBeGreaterThan(start)
+  }
+  const expectPaused = async () => {
+    await frames(page, 5) // let the IntersectionObserver / visibilitychange callback land
+    const paused = await draws()
+    await frames(page, 30)
+    expect(await draws()).toBe(paused)
+  }
+  const setHidden = (hidden: boolean) =>
+    page.evaluate((value) => {
+      Object.defineProperty(document, 'hidden', { configurable: true, get: () => value })
+      document.dispatchEvent(new Event('visibilitychange'))
+    }, hidden)
+
+  await expectRunning()
+
+  await page.locator('#contact-me').scrollIntoViewIfNeeded()
+  await expectPaused()
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await expectRunning()
+
+  await setHidden(true)
+  await expectPaused()
+  await setHidden(false)
+  await expectRunning()
+})
