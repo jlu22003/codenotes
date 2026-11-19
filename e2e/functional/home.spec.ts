@@ -289,12 +289,33 @@ test.describe('hero particle sphere', () => {
 const threeLoaded = (page: import('@playwright/test').Page) =>
   page.evaluate(() => (window as Window & { __THREE__?: string }).__THREE__ !== undefined)
 
+// Scripts served by the site whose body contains Three.js's `__THREE__` global marker. A statically imported
+// chunk is fetched on every route even when its module never evaluates, so check the downloads, not just the global.
+const collectThreeScripts = (page: import('@playwright/test').Page) => {
+  const urls: string[] = []
+  const pending: Promise<void>[] = []
+  page.on('response', (response) => {
+    if (response.request().resourceType() !== 'script') return
+    pending.push(
+      response.text().then(
+        (body) => { if (body.includes('__THREE__')) urls.push(response.url()) },
+        () => {}
+      )
+    )
+  })
+  return async () => { await Promise.all(pending); return urls }
+}
+
 test('Three.js loads on the home page only', { tag: '@functional' }, async ({ page }) => {
   await page.goto('/')
   await expect.poll(() => threeLoaded(page)).toBe(true)
   for (const route of ['/blog', latestPost!.route, '/projects', '/portfolio/about']) {
-    await page.goto(route, { waitUntil: 'networkidle' })
-    expect(await threeLoaded(page), route).toBe(false)
+    const routePage = await page.context().newPage()
+    const threeScripts = collectThreeScripts(routePage)
+    await routePage.goto(route, { waitUntil: 'networkidle' })
+    expect(await threeLoaded(routePage), route).toBe(false)
+    expect(await threeScripts(), route).toEqual([])
+    await routePage.close()
   }
 })
 
