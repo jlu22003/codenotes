@@ -367,8 +367,8 @@ export default function ParticleSphere({
     } else {
       window.addEventListener("pointermove", handlePointerMove, { passive: true });
       document.addEventListener("visibilitychange", handleVisibilityChange);
-      intersectionObserver = new IntersectionObserver(([entry]) => {
-        heroOnScreen = entry.isIntersecting;
+      intersectionObserver = new IntersectionObserver((entries) => {
+        heroOnScreen = entries[entries.length - 1].isIntersecting;
         updateLoop();
       });
       intersectionObserver.observe(container);
