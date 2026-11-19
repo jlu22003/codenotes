@@ -22,7 +22,7 @@ Most engineering portfolios show only what was shipped. This one also shows the 
 | Language | TypeScript, MDX |
 | Styling | Tailwind CSS v4, shadcn/ui on Radix UI, OKLCH design tokens |
 | Motion & 3D | GSAP, Three.js |
-| UI pieces | Embla Carousel, Lucide icons, react-photo-album |
+| UI pieces | Embla Carousel, Lucide icons |
 | Search | Pagefind (indexed at build time) |
 | Email | Resend |
 
@@ -56,7 +56,7 @@ Without a key, the rest of the site works, but sending the contact form fails wi
 | Command | What it does |
 | --- | --- |
 | `npm run dev` | Development server with Turbopack |
-| `npm run build` | Production build, then `postbuild` runs Pagefind to write the search index to `public/_pagefind/` |
+| `npm run build` | Production build, then `postbuild` runs [`scripts/pagefind.mjs`](scripts/pagefind.mjs) to write the search index to `public/_pagefind/` |
 | `npm run start` | Serves the production build (run `npm run build` first) |
 | `npm run lint` | ESLint |
 
@@ -90,7 +90,7 @@ public/
 
 - **A project or post:** add an `.mdx` file to `src/content/projects/` or `src/content/blog/`, then list it in that folder's `_meta.js`. The order in `_meta.js` is the sidebar and pagination order.
 - **A home page project card:** add an entry to [`src/components/sections/Projects-Data.ts`](src/components/sections/Projects-Data.ts).
-- **A hidden page:** set `display: 'hidden'` in `_meta.js` to keep it routable but out of the navigation (as with unfinished project stubs).
+- **A hidden page:** set `display: 'hidden'` in `_meta.js` to keep it routable but out of the navigation and the search index (as with unfinished project stubs).
 - **The Latest Writing card** picks the blog post with the newest front-matter `date`, and shows its `_meta.js` title.
 
 ## Deployment

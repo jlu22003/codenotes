@@ -102,7 +102,6 @@ Check these against the code during brainstorming; if any are wrong, fix this se
   - `/projects` plus 10 project pages
   - `/blog` plus posts (one blog post exists today)
   - `/portfolio/{about,experience,skills,education}`
-  - `/gallery/test`, which is hidden from the sidebar and has pagination disabled; `/gallery` itself returns 404
 - **Navigation:** the Nextra navbar has a GitHub link and a LinkedIn link, the `StatusLine` sits under the navbar, and the footer shows the current year. `/projects` uses an explicit `href` in `src/content/_meta.js`, which currently resolves to `/projects/laylocafe` instead of `/projects` (see §7 bug #7).
 - **Contact form:**
   - Client: `src/components/sections/Contact.tsx`.
@@ -130,7 +129,6 @@ Check these against the code during brainstorming; if any are wrong, fix this se
 - **Fixture data:**
   - Wherever a test asserts on content, it uses fixtures rather than whatever is currently live.
   - Because content is MDX in the repo, decide during brainstorming between two approaches: (a) a dedicated fixture MDX page or directory that only the tests use, or (b) deriving expectations from the `_meta.js` and front-matter files at test time.
-  - The gallery's external images are stubbed rather than fetched live.
 - **Screenshot hygiene:**
   - Before each screenshot: set `reducedMotion: 'reduce'`, disable CSS animations (`animations: 'disabled'`), and wait for `document.fonts.ready`.
   - Mask the dynamic regions: footer year, Latest Blog date, ParticleSphere canvas, marquee.
@@ -148,7 +146,6 @@ Check these against the code during brainstorming; if any are wrong, fix this se
 | --- | --- | --- |
 | Every route in §1 returns < 400, shows `main`/`article`, and throws no `pageerror` | Derive the project and blog lists from `src/content` so new pages are covered automatically | 🟡 7 routes only |
 | Unknown route returns 404 | Deep unknown path (`/projects/nope/nope`); trailing slash on a real route | 🟡 |
-| `/gallery` is reachable but hidden | Not in the sidebar; no prev/next footer; never shown as "Photo Album" in the blog pagination footer | ⬜ |
 | No console errors or hydration warnings | Fail on `console.error` as well as `pageerror` | ⬜ |
 | Metadata | `<title>`, `description`, and OpenGraph tags present on `/` | ⬜ |
 
@@ -213,6 +210,7 @@ Validation fails before Resend is called, so these are safe. Any case that would
 | --- | --- | --- |
 | A known project title returns a result that links to that project | Case-insensitive; partial word | ⬜ |
 | No matches | Empty state shown, not an error | ⬜ |
+| Hidden pages not indexed | Pages set to `display: 'hidden'` in `_meta.js` (except section `index` pages) are absent from the Pagefind index | ✅ |
 | Keyboard | The search shortcut focuses the input; arrow keys and Enter open a result | ⬜ |
 | Code blocks not indexed | `search.codeblocks: false` in `next.config.mjs`, so text that appears only in a code block returns nothing | **N/A** — the content has no fenced code blocks |
 
