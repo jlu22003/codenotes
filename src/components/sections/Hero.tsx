@@ -1,9 +1,20 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import ParticleSphere from "@/components/sections/ParticleSphere";
 import { STATUS_LINE_HEIGHT_PX } from "@/components/ui/StatusLine";
+
+// Every MDX page shares one catch-all route, so a static import put Three.js
+// (~200 KB gzipped) in the JS of every page. Loading it dynamically keeps it
+// in its own chunk, fetched only where the hero renders. ssr: false is free
+// here: the sphere draws nothing until its client-side effect runs anyway,
+// and its absolutely positioned wrapper below already reserves the space, so
+// the late mount causes no layout shift.
+const ParticleSphere = dynamic(
+  () => import("@/components/sections/ParticleSphere"),
+  { ssr: false }
+);
 
 export default function Hero() {
   return (
