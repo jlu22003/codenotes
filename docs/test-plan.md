@@ -109,7 +109,7 @@ Check these against the code during brainstorming; if any are wrong, fix this se
   - The API validates in this order: name, email, email format, message, then message length (2000 or fewer characters).
 - **Theming:** Nextra's theme switcher (`next-themes`) puts the `dark` class on `<html>` and remembers the choice in `localStorage` under `theme`. The control is the "Change theme" listbox (Light / Dark / System). Colours come from the OKLCH tokens in `globals.css` plus Nextra's `<Head color>` tint scale in `layout.tsx`.
 - **Motion:** GSAP (skills marquee, scroll effects) and a Three.js `ParticleSphere` (WebGL canvas) in the hero. `Skills.tsx` and `ParticleSphere.tsx` check `prefers-reduced-motion`.
-- **Search:** Pagefind. The index is built only by `npm run build` (the `postbuild` step), so search does not work under `next dev`. The index in `public/_pagefind` is committed to the repo.
+- **Search:** Pagefind. The index is built only by `npm run build` (the `postbuild` step), so search does not work under `next dev`. The index in `public/_pagefind` is generated at build time and gitignored.
 - **Non-deterministic content:**
   - The footer year.
   - The Latest Blog date, which `toLocaleDateString` formats differently depending on time zone.
