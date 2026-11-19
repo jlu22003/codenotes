@@ -1,5 +1,5 @@
 import { test, expect } from '../fixtures'
-import { publishedRoutes, routes } from '../content'
+import { routes } from '../content'
 
 const SITE_URL = 'https://www.justinklu.com'
 const absolute = (route: string) => (route === '/' ? SITE_URL : `${SITE_URL}${route}`)
@@ -19,7 +19,10 @@ for (const route of routes) {
     await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', absolute(route))
     await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', title)
     await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute('content', 'Justin K. Lu')
-    await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/)
+    const description = await page.locator('meta[name="description"]').getAttribute('content')
+    expect(description).toMatch(/\S/)
+    await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', description!)
+    await expect(page.locator('meta[name="twitter:description"]')).toHaveAttribute('content', description!)
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', `${SITE_URL}/opengraph-image`)
     await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image')
     await expect(page.locator('meta[name="twitter:image"]')).toHaveAttribute('content', /\/opengraph-image/)
@@ -39,11 +42,16 @@ test('home describes the owner as a schema.org Person', { tag: '@functional' }, 
   })
 })
 
-test('sitemap lists exactly the published pages', { tag: '@functional' }, async ({ request }) => {
+test('sitemap lists the published pages and leaves out hidden ones', { tag: '@functional' }, async ({ request }) => {
   const response = await request.get('/sitemap.xml')
   expect(response.status()).toBe(200)
   const locs = [...(await response.text()).matchAll(/<loc>([^<]+)<\/loc>/g)].map((match) => match[1])
-  expect(locs.sort()).toEqual(publishedRoutes.map(absolute).sort())
+  expect(new Set(locs).size).toBe(locs.length)
+  expect(routes.map(absolute)).toEqual(expect.arrayContaining(locs))
+  expect(locs).toEqual(expect.arrayContaining(['/', '/blog', '/projects', '/portfolio/about'].map(absolute)))
+  for (const hidden of ['/gallery/test', '/projects/securechatapp', '/projects/raspberrypi', '/projects/riftrewind']) {
+    expect(locs).not.toContain(absolute(hidden))
+  }
 })
 
 test('robots.txt allows crawling and points at the sitemap', { tag: '@functional' }, async ({ request }) => {

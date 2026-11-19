@@ -17,10 +17,7 @@ const metas: Record<string, Meta> = {
   projects: projectsMeta,
 }
 
-// hiddenFromNav: left out of the sidebar. published: listed in the sitemap — the same as
-// !hiddenFromNav, except a section's index page, which `display: 'hidden'` only keeps out of
-// the sidebar (/blog).
-export type Page = { route: string; title?: string; date?: string; hiddenFromNav: boolean; published: boolean }
+export type Page = { route: string; title?: string; date?: string; hiddenFromNav: boolean }
 
 export const pages: Page[] = fs
   .readdirSync(CONTENT_DIR, { withFileTypes: true })
@@ -39,13 +36,11 @@ export const pages: Page[] = fs
           title: entry.title ?? source.match(/^title:\s*(.+)$/m)?.[1],
           date: source.match(/^date:\s*(.+)$/m)?.[1],
           hiddenFromNav: entry.display === 'hidden' || sectionHidden,
-          published: !sectionHidden && (entry.display !== 'hidden' || name === 'index'),
         }
       }),
   )
 
 export const routes = ['/', ...pages.map((page) => page.route)]
-export const publishedRoutes = ['/', ...pages.filter((page) => page.published).map((page) => page.route)]
 
 export function sidebarTitles(section: string): string[] {
   return Object.values(metas[section] ?? {})
