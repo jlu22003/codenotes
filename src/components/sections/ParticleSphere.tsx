@@ -272,7 +272,7 @@ export default function ParticleSphere({
       mouseTargetY = (event.clientY / window.innerHeight) * 2 - 1;
     };
 
-    let frameId: number;
+    let frameId = 0;
     let lastTime = performance.now();
     let autoAngleY = 0;
     let autoAngleX = 0;
@@ -282,75 +282,104 @@ export default function ParticleSphere({
     const positionAttribute = geometry.attributes.position as BufferAttribute;
     const livePositions = positionAttribute.array as Float32Array;
 
+    // The loop only runs while the hero is on screen and the tab is visible;
+    // otherwise every frame would be a WebGL draw nobody can see.
+    let heroOnScreen = true;
+    let intersectionObserver: IntersectionObserver | undefined;
+    const handleVisibilityChange = () => updateLoop();
+
+    const tick = (now: number) => {
+      // Clamp dt so a throttled/backgrounded tab can't hand the spring a
+      // huge timestep and make it blow up when the tab regains focus.
+      const deltaSeconds = Math.min((now - lastTime) / 1000, 1 / 30);
+      lastTime = now;
+
+      autoAngleY += ROTATION_RADIANS_PER_SECOND * deltaSeconds;
+      autoAngleX += ROTATION_RADIANS_PER_SECOND * 0.3 * deltaSeconds;
+
+      [mouseCurrentX, mouseVelocityX] = stepSpring(
+        mouseCurrentX,
+        mouseVelocityX,
+        mouseTargetX,
+        deltaSeconds
+      );
+      [mouseCurrentY, mouseVelocityY] = stepSpring(
+        mouseCurrentY,
+        mouseVelocityY,
+        mouseTargetY,
+        deltaSeconds
+      );
+
+      // Read actual scroll speed straight from window.scrollY each frame —
+      // no event listener or trigger needed, just a continuous target the
+      // spring chases. Scrolling fast pushes the target near 1; slowing
+      // down or stopping naturally lets it settle back to 0.
+      const scrollDelta = window.scrollY - lastScrollY;
+      lastScrollY = window.scrollY;
+      const scrollSpeed = Math.abs(scrollDelta) / deltaSeconds;
+      const explosionTarget = Math.min(
+        scrollSpeed / SCROLL_SPEED_FOR_FULL_EXPLOSION,
+        1
+      );
+      [explosionAmount, explosionVelocity] = stepSpring(
+        explosionAmount,
+        explosionVelocity,
+        explosionTarget,
+        deltaSeconds,
+        EXPLOSION_SPRING_STIFFNESS,
+        EXPLOSION_SPRING_DAMPING
+      );
+
+      if (explosionAmount > 0.001 || explosionTarget > 0) {
+        for (let i = 0; i < count; i++) {
+          const travel = explosionDistances[i] * explosionAmount;
+          livePositions[i * 3] = basePositions[i * 3] + explosionDirections[i * 3] * travel;
+          livePositions[i * 3 + 1] = basePositions[i * 3 + 1] + explosionDirections[i * 3 + 1] * travel;
+          livePositions[i * 3 + 2] = basePositions[i * 3 + 2] + explosionDirections[i * 3 + 2] * travel;
+        }
+        positionAttribute.needsUpdate = true;
+      }
+
+      points.rotation.y = autoAngleY + mouseCurrentX * MAX_MOUSE_YAW;
+      points.rotation.x = autoAngleX + mouseCurrentY * MAX_MOUSE_PITCH;
+
+      renderer.render(scene, camera);
+      frameId = requestAnimationFrame(tick);
+    };
+
+    function updateLoop() {
+      const shouldRun = heroOnScreen && !document.hidden;
+      if (shouldRun && !frameId) {
+        // Resume from "now": without this the first frame would measure the
+        // whole pause as elapsed time and the scroll distance covered while
+        // paused as one frame's scroll speed, bursting the sphere apart.
+        lastTime = performance.now();
+        lastScrollY = window.scrollY;
+        frameId = requestAnimationFrame(tick);
+      } else if (!shouldRun && frameId) {
+        cancelAnimationFrame(frameId);
+        frameId = 0;
+      }
+    }
+
     if (prefersReducedMotion) {
       renderer.render(scene, camera);
     } else {
       window.addEventListener("pointermove", handlePointerMove, { passive: true });
-
-      const tick = (now: number) => {
-        // Clamp dt so a throttled/backgrounded tab can't hand the spring a
-        // huge timestep and make it blow up when the tab regains focus.
-        const deltaSeconds = Math.min((now - lastTime) / 1000, 1 / 30);
-        lastTime = now;
-
-        autoAngleY += ROTATION_RADIANS_PER_SECOND * deltaSeconds;
-        autoAngleX += ROTATION_RADIANS_PER_SECOND * 0.3 * deltaSeconds;
-
-        [mouseCurrentX, mouseVelocityX] = stepSpring(
-          mouseCurrentX,
-          mouseVelocityX,
-          mouseTargetX,
-          deltaSeconds
-        );
-        [mouseCurrentY, mouseVelocityY] = stepSpring(
-          mouseCurrentY,
-          mouseVelocityY,
-          mouseTargetY,
-          deltaSeconds
-        );
-
-        // Read actual scroll speed straight from window.scrollY each frame —
-        // no event listener or trigger needed, just a continuous target the
-        // spring chases. Scrolling fast pushes the target near 1; slowing
-        // down or stopping naturally lets it settle back to 0.
-        const scrollDelta = window.scrollY - lastScrollY;
-        lastScrollY = window.scrollY;
-        const scrollSpeed = Math.abs(scrollDelta) / deltaSeconds;
-        const explosionTarget = Math.min(
-          scrollSpeed / SCROLL_SPEED_FOR_FULL_EXPLOSION,
-          1
-        );
-        [explosionAmount, explosionVelocity] = stepSpring(
-          explosionAmount,
-          explosionVelocity,
-          explosionTarget,
-          deltaSeconds,
-          EXPLOSION_SPRING_STIFFNESS,
-          EXPLOSION_SPRING_DAMPING
-        );
-
-        if (explosionAmount > 0.001 || explosionTarget > 0) {
-          for (let i = 0; i < count; i++) {
-            const travel = explosionDistances[i] * explosionAmount;
-            livePositions[i * 3] = basePositions[i * 3] + explosionDirections[i * 3] * travel;
-            livePositions[i * 3 + 1] = basePositions[i * 3 + 1] + explosionDirections[i * 3 + 1] * travel;
-            livePositions[i * 3 + 2] = basePositions[i * 3 + 2] + explosionDirections[i * 3 + 2] * travel;
-          }
-          positionAttribute.needsUpdate = true;
-        }
-
-        points.rotation.y = autoAngleY + mouseCurrentX * MAX_MOUSE_YAW;
-        points.rotation.x = autoAngleX + mouseCurrentY * MAX_MOUSE_PITCH;
-
-        renderer.render(scene, camera);
-        frameId = requestAnimationFrame(tick);
-      };
-      frameId = requestAnimationFrame(tick);
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+      intersectionObserver = new IntersectionObserver((entries) => {
+        heroOnScreen = entries[entries.length - 1].isIntersecting;
+        updateLoop();
+      });
+      intersectionObserver.observe(container);
+      updateLoop();
     }
 
     return () => {
       if (frameId) cancelAnimationFrame(frameId);
       window.removeEventListener("pointermove", handlePointerMove);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      intersectionObserver?.disconnect();
       themeObserver.disconnect();
       resizeObserver.disconnect();
       geometry.dispose();
