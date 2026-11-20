@@ -3,30 +3,36 @@ import { Footer, Layout, Navbar } from 'nextra-theme-docs'
 import { Head, Search } from 'nextra/components'
 import { getPageMap } from 'nextra/page-map'
 import 'nextra-theme-docs/style.css'
-import { Montserrat, JetBrains_Mono } from 'next/font/google'
+import localFont from 'next/font/local'
 import AccessibilityPatches from '@/components/ui/AcessibilityPatches';
 import StatusLine from '@/components/ui/StatusLine';
 import TocTechStack from '@/components/ui/TocTechStack';
 
+// Fonts are self-hosted so the build never fetches from Google Fonts (a flaky
+// build-time fetch used to break CI). The files in ./fonts are the Latin-subset
+// variable fonts Google Fonts serves, under the SIL OFL (licenses alongside).
+
 // Configure Montserrat for headings
-const montserrat = Montserrat({
-  subsets: ['latin'],
-  weight: ['700', '800'],
+const montserrat = localFont({
+  src: './fonts/Montserrat-latin.woff2',
+  weight: '700 800',
+  style: 'normal',
   variable: '--font-montserrat',
   display: 'swap',
   fallback: ['system-ui', 'sans-serif'],
-  adjustFontFallback: true,
+  adjustFontFallback: 'Arial',
   preload: true,
 })
 
 // Configure JetBrains Mono for technical facts: tags, dates, metrics, code
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
+const jetbrainsMono = localFont({
+  src: './fonts/JetBrainsMono-latin.woff2',
+  weight: '400 500',
+  style: 'normal',
   variable: '--font-jetbrains-mono',
   display: 'swap',
   fallback: ['ui-monospace', 'SFMono-Regular', 'monospace'],
-  adjustFontFallback: true,
+  adjustFontFallback: 'Arial',
   preload: true,
 })
 
