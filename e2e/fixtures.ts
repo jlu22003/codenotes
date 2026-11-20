@@ -1,10 +1,5 @@
 import { test as base, expect } from '@playwright/test'
 
-const STUBBED_HOSTS = ['images.react-photo-album.com']
-export const PIXEL = Buffer.from(
-  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
-  'base64',
-)
 export const FAKE_RESEND = `http://localhost:${process.env.E2E_RESEND_PORT ?? 3201}`
 
 export const test = base.extend<{ allowedErrors: RegExp[]; guard: void }>({
@@ -17,11 +12,7 @@ export const test = base.extend<{ allowedErrors: RegExp[]; guard: void }>({
       await page.route(
         (url) => url.hostname !== 'localhost',
         (route) => {
-          const url = new URL(route.request().url())
-          if (STUBBED_HOSTS.includes(url.hostname)) {
-            return route.fulfill({ contentType: 'image/png', body: PIXEL })
-          }
-          blocked.push(url.href)
+          blocked.push(route.request().url())
           return route.abort('blockedbyclient')
         },
       )

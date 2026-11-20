@@ -1,4 +1,4 @@
-import { test, expect, PIXEL, FAKE_RESEND } from './fixtures'
+import { test, expect, FAKE_RESEND } from './fixtures'
 import { execSync } from 'node:child_process'
 import { latestPost, pages, routes, sidebarTitles } from './content'
 
@@ -7,15 +7,6 @@ test.describe('network guard', () => {
     test.fail()
     await page.goto('/')
     await page.evaluate(() => fetch('https://example.com/').catch(() => undefined))
-  })
-
-  test('stubs gallery images instead of fetching them', { tag: '@functional' }, async ({ page }) => {
-    const stubbedResponse = page.waitForResponse((res) => new URL(res.url()).hostname === 'images.react-photo-album.com')
-    await page.goto('/gallery/test')
-    const response = await stubbedResponse
-    expect(response.status()).toBe(200)
-    expect(response.headers()['content-type']).toBe('image/png')
-    expect(await response.body()).toEqual(PIXEL)
   })
 })
 
@@ -46,12 +37,11 @@ test.describe('content source', () => {
     const mdxFiles = execSync('find src/content -mindepth 2 -name "*.mdx"').toString().trim().split('\n')
     expect(pages).toHaveLength(mdxFiles.length)
     expect(routes).toContain('/projects/laylocafe')
-    expect(routes).toContain('/gallery/test')
   })
 
   test('marks pages hidden in _meta.js as hidden from nav', { tag: '@functional' }, () => {
     const hidden = pages.filter((page) => page.hiddenFromNav).map((page) => page.route)
-    expect(hidden).toEqual(expect.arrayContaining(['/projects/securechatapp', '/gallery/test']))
+    expect(hidden).toEqual(expect.arrayContaining(['/projects/securechatapp']))
     expect(hidden).not.toContain('/projects/laylocafe')
   })
 

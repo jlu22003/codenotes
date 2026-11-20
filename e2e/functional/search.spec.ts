@@ -56,3 +56,20 @@ test('works from the keyboard', { tag: '@functional' }, async ({ page }) => {
   await page.keyboard.press('Enter')
   await expect(page).toHaveURL(new RegExp(`${route}(#.*)?$`))
 })
+
+// Unfinished pages hidden in _meta.js must never surface in search (PRODUCT.md).
+// Queries the Pagefind index directly so every hidden page is checked, not just
+// whichever one a typed query happens to rank first.
+test('leaves pages hidden in _meta.js out of the search index', { tag: '@functional' }, async ({ page }) => {
+  // Section index pages are landing pages, only hidden from their own sidebar.
+  const hidden = pages.filter((p) => p.hiddenFromNav && !/^\/[^/]+$/.test(p.route)).map((p) => p.route)
+  expect(hidden).toEqual(expect.arrayContaining(['/projects/securechatapp', '/projects/raspberrypi', '/projects/riftrewind']))
+  await page.goto('/')
+  const indexed = await page.evaluate(async () => {
+    const pagefind = await import(/* webpackIgnore: true */ '/_pagefind/pagefind.js' as string)
+    const { results } = await pagefind.search(null)
+    return Promise.all(results.map(async (result: { data: () => Promise<{ url: string }> }) => (await result.data()).url))
+  })
+  expect(indexed).toContain(route)
+  for (const hiddenRoute of hidden) expect(indexed).not.toContain(hiddenRoute)
+})
