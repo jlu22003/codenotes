@@ -1,0 +1,22 @@
+# Weekly grouped dependency updates. The e2e workflow runs on every
+# Dependabot PR; merge an update only when that run is green. (main has no
+# required status checks, so a failing run does not block the merge.)
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      npm-minor-patch:
+        update-types: [minor, patch]
+      npm-major:
+        update-types: [major]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']
