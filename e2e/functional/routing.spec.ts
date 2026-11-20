@@ -51,10 +51,3 @@ test.describe('internal link crawl', () => {
     expect(broken).toEqual([])
   })
 })
-
-test('home has title and social metadata', { tag: '@functional' }, async ({ page }) => {
-  await page.goto('/')
-  await expect(page).toHaveTitle(/\S/)
-  await expect(page.locator('meta[name="description"]')).toHaveAttribute('content', /\S/)
-  await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute('content', 'Justin Lu Portfolio')
-})

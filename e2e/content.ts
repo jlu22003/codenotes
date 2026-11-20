@@ -30,12 +30,12 @@ export const pages: Page[] = fs
         const name = file.replace(/\.mdx$/, '')
         const source = fs.readFileSync(path.join(CONTENT_DIR, section, file), 'utf8')
         const entry = metas[section]?.[name] ?? {}
+        const sectionHidden = (rootMeta as Meta)[section]?.display === 'hidden'
         return {
           route: name === 'index' ? `/${section}` : `/${section}/${name}`,
           title: entry.title ?? source.match(/^title:\s*(.+)$/m)?.[1],
           date: source.match(/^date:\s*(.+)$/m)?.[1],
-          hiddenFromNav:
-            entry.display === 'hidden' || (rootMeta as Meta)[section]?.display === 'hidden',
+          hiddenFromNav: entry.display === 'hidden' || sectionHidden,
         }
       }),
   )
