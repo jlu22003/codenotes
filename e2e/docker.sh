@@ -24,5 +24,5 @@ exec docker run --rm --ipc=host --platform "linux/$ARCH" \
   -w /work \
   ${DOCKER:+-e E2E_DOCKER=1} \
   ${EMULATED:+-e E2E_EMULATED=1} \
-  mcr.microsoft.com/playwright:v1.64.0-noble \
+  mcr.microsoft.com/playwright:v1.65.1-noble \
   sh -c '[ node_modules/.package-lock.json -nt package-lock.json ] || npm ci; npx playwright test "$@"' -- "$@"
