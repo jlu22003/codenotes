@@ -166,7 +166,7 @@ Corners are moderate and consistent rather than sharp or pill-shaped by default:
 - **Outline:** transparent/page background, hairline border, `shadow-xs`; hover fills with Highlighter Cream.
 - **Ghost:** no background or border at rest; hover fills with Highlighter Cream.
 - **Link:** Graphite Ink text, underline only on hover.
-- **Focus:** a 3px `ring-ring/50` ring plus a solid focus border — visible, never suppressed.
+- **Focus:** a solid 3px `ring-ring` (Graphite Ink) ring plus a solid focus border — visible, never suppressed.
 
 ### Chips / Tags
 - **Style:** pill-shaped (`rounded-full`), `0.125rem 0.5rem` padding, small (`text-xs`) JetBrains Mono type.

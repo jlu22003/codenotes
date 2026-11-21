@@ -31,7 +31,10 @@
   --destructive-foreground: oklch(1.0000 0 0);
   --border: oklch(0.5538 0.0025 17.2320);
   --input: oklch(1.0000 0 0);
-  --ring: oklch(0.7058 0 0);
+  /* Graphite Ink, per DESIGN.md: the stock oklch(0.7058 0 0) measured ~1.5:1
+     on background and card, under the 3:1 WCAG 1.4.11 minimum for a focus
+     indicator. */
+  --ring: oklch(0.4891 0 0);
 }
 
 .dark {
@@ -97,7 +100,7 @@
 /* Override specific Nextra styles that might conflict */
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring;
   }
   
   body {

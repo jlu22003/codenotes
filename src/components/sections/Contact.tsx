@@ -7,11 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle2, AlertCircle, Send, Loader2 } from "lucide-react";
+import { CheckCircle2, AlertCircle, Send, Loader2, Download } from "lucide-react";
 import Link from "next/link";
 
 const MESSAGE_MAX_LENGTH = 2000;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const CONTACT_EMAIL = "justinklu75@gmail.com";
+const SEND_FAILED_MESSAGE = `Your message wasn't sent. Check your connection and try again, or email ${CONTACT_EMAIL}.`;
 
 type FieldName = "firstName" | "lastName" | "email" | "message";
 type FieldErrors = Partial<Record<FieldName, string>>;
@@ -107,27 +109,28 @@ export default function Contact() {
         }),
       });
 
-      const data = await response.json();
+      if (response.ok) {
+        setStatus("success");
+        setFormData({ firstName: "", lastName: "", email: "", message: "" });
 
-      if (!response.ok) {
-        if (data.field) {
-          setFieldErrors({ [data.field as FieldName]: data.error });
-        }
-        throw new Error(data.error || "Failed to send message");
+        // Reset success message after 5 seconds
+        setTimeout(() => setStatus("idle"), 5000);
+        return;
       }
 
-      setStatus("success");
-      setFormData({ firstName: "", lastName: "", email: "", message: "" });
-
-      // Reset success message after 5 seconds
-      setTimeout(() => setStatus("idle"), 5000);
+      // Only a field-level 400 carries a message worth showing as-is; any
+      // other failure (5xx, a non-JSON error page) gets the recovery copy.
+      const data = await response.json().catch(() => null);
+      if (response.status === 400 && data?.field && typeof data.error === "string") {
+        setFieldErrors({ [data.field as FieldName]: data.error });
+        setStatus("error");
+        setErrorMessage(data.error);
+        return;
+      }
+      throw new Error(`Contact request failed with status ${response.status}`);
     } catch (error) {
       setStatus("error");
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "Failed to send message. Please try emailing me directly."
-      );
+      setErrorMessage(SEND_FAILED_MESSAGE);
       console.error("Contact form error:", error);
     }
   };
@@ -162,8 +165,8 @@ export default function Contact() {
             <ul className="space-y-2 text-muted-foreground">
               <li>
                 <span className="font-medium text-foreground">Email:</span>{" "}
-                <Link href="mailto:justinklu75@gmail.com" className="underline hover:text-primary transition-colors">
-                  justinklu75@gmail.com
+                <Link href={`mailto:${CONTACT_EMAIL}`} className="underline hover:text-primary transition-colors">
+                  {CONTACT_EMAIL}
                 </Link>
               </li>
               <li>
@@ -171,6 +174,15 @@ export default function Contact() {
                 Alpharetta, GA / U.S.
               </li>
             </ul>
+
+            {/* In normal flow rather than floating: a fixed corner button
+                covered body text at narrow widths and high zoom. */}
+            <Button asChild variant="outline" size="lg" className="group/btn">
+              <a href="/2025Resume.pdf" download="2025Resume.pdf">
+                <Download className="h-4 w-4 transition-transform group-hover/btn:translate-y-0.5" />
+                Download resume
+              </a>
+            </Button>
           </div>
 
           {/* Form */}

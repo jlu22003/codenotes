@@ -73,7 +73,7 @@ src/
 │   └── globals.css               # Tailwind v4 + OKLCH design tokens
 ├── components/
 │   ├── sections/                 # home page sections: Hero, ParticleSphere, Projects,
-│   │                             # Focus, Skills, LatestBlog, Contact, ResumeDownloadButton
+│   │                             # Focus, Skills, LatestBlog, Contact
 │   └── ui/                       # shadcn/ui primitives and small site components
 └── content/                      # all pages, as MDX
     ├── _meta.js                  # top-level navigation
@@ -82,7 +82,7 @@ src/
     ├── projects/                 # one MDX file per project (+ _meta.js for order/visibility)
     └── blog/
 public/
-├── 2025Resume.pdf                # served by the floating "Resume" button
+├── 2025Resume.pdf                # served by the "Download resume" button in Contact
 └── images/projects/              # project screenshots
 ```
 

@@ -87,7 +87,7 @@ function SkillsRow({
         </div>
       ) : (
         <div
-          className="overflow-hidden rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          className="overflow-hidden rounded-md outline-none focus-visible:ring-[3px] focus-visible:ring-ring"
           tabIndex={0}
           role="group"
           aria-label={`${label} skills, scrolling. Focus to pause.`}
