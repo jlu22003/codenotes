@@ -17,7 +17,7 @@ async function fill(page: Page, values: Partial<Record<(typeof FIELDS)[number], 
 }
 
 const valid = { 'First Name': 'Ada', 'Last Name': 'Lovelace', Email: 'ada@example.com', Message: 'Hello' }
-const submit = (page: Page) => page.getByRole('button', { name: 'Submit Contact Form' }).click()
+const submit = (page: Page) => page.getByRole('button', { name: 'Send Message' }).click()
 
 // The form is server-rendered before React hydrates it. Investigated (see
 // task-10-report.md): a write that lands in that window is NOT wiped by
@@ -138,7 +138,8 @@ test('disables the form while sending and sends once', { tag: '@functional' }, a
     await route.fulfill({ json: { message: 'Message sent successfully' } })
   })
   await fill(page, valid)
-  const button = page.getByRole('button', { name: 'Submit Contact Form' })
+  // Its name follows its text, which changes to "Sending..." mid-test.
+  const button = page.locator('form button[type="submit"]')
   await button.click()
   await expect(button).toBeDisabled()
   await expect(button).toHaveText('Sending...')
@@ -222,7 +223,7 @@ test('can be completed with the keyboard alone', { tag: '@functional' }, async (
     await page.keyboard.type(value)
     await page.keyboard.press(tab)
   }
-  await expect(page.getByRole('button', { name: 'Submit Contact Form' })).toBeFocused()
+  await expect(page.getByRole('button', { name: 'Send Message' })).toBeFocused()
   await page.keyboard.press('Enter')
   await expect(page.getByRole('status')).toBeVisible()
   expect(calls).toHaveLength(1)

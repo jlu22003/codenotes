@@ -166,7 +166,7 @@ Check these against the code during brainstorming; if any are wrong, fix this se
 | Case | Edge cases | Status |
 | --- | --- | --- |
 | Sections present in order | Hero → Differentiator → Projects → Focus → Skills → Latest Blog → Contact | ⬜ |
-| Projects carousel | Next/Previous move the slides; Previous is disabled (or a no-op) at the start and Next at the end; keyboard works; each card's `aria-label` "View project: …" links to a page that exists | ⬜ |
+| Projects carousel | Next/Previous move the slides; Previous is disabled (or a no-op) at the start and Next at the end; keyboard works; each card links to a page that exists | ⬜ |
 | Latest Blog | Shows the newest post by front-matter `date`; a post with no `date` sorts last; the link goes to a real post | ⬜ |
 | Resume download | The "Download resume" link in Contact starts a download named `2025Resume.pdf`; the file exists in `public/` | ⬜ |
 | Reduced motion | With `reducedMotion: 'reduce'`, the marquee and sphere don't animate and no errors are thrown | ⬜ |

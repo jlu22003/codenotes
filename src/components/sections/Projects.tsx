@@ -120,7 +120,7 @@ const Projects = ({
                 className="pl-4 md:max-w-[452px]"
                 aria-label={`${index + 1} of ${projects.length}`}
               >
-                <Link href={item.url} className="group flex flex-col h-full" aria-label={`View project: ${item.title}`}>
+                <Link href={item.url} className="group flex flex-col h-full">
                   {/* Image Card */}
                   <div className="relative aspect-3/2 overflow-hidden rounded-xl">
                     <div

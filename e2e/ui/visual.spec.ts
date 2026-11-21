@@ -74,12 +74,12 @@ for (const [size, viewport] of Object.entries(VIEWPORTS)) {
       await settle(page, '/', 'light')
       const card = page.locator('#contact-me form').locator('xpath=ancestor::*[contains(@class,"rounded")][1]')
       await expect(card).toHaveScreenshot(`contact-idle-${size}.png`)
-      await page.getByRole('button', { name: 'Submit Contact Form' }).click()
+      await page.getByRole('button', { name: 'Send Message' }).click()
       await expect(card).toHaveScreenshot(`contact-error-${size}.png`)
       for (const [label, value] of [['First Name', 'Ada'], ['Last Name', 'Lovelace'], ['Email', 'ada@example.com'], ['Message', 'Hello']]) {
         await page.getByLabel(label, { exact: true }).fill(value)
       }
-      await page.getByRole('button', { name: 'Submit Contact Form' }).click()
+      await page.getByRole('button', { name: 'Send Message' }).click()
       await expect(page.getByRole('status')).toBeVisible()
       await expect(card).toHaveScreenshot(`contact-success-${size}.png`)
     })
@@ -89,7 +89,7 @@ for (const [size, viewport] of Object.entries(VIEWPORTS)) {
 test('focus rings', { tag: '@visual' }, async ({ page }) => {
   await settle(page, '/', 'light')
   for (const [name, target] of [
-    ['button', page.getByRole('button', { name: 'Submit Contact Form' })],
+    ['button', page.getByRole('button', { name: 'Send Message' })],
     ['link', page.getByRole('link', { name: 'View All Projects' })],
     ['input', page.getByLabel('First Name', { exact: true })],
   ] as const) {

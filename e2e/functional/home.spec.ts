@@ -16,7 +16,7 @@ test('sections appear in order', { tag: '@functional' }, async ({ page }) => {
 
 test('project cards link to pages that exist', { tag: '@functional' }, async ({ page, request }) => {
   await page.goto('/')
-  const cards = page.getByRole('link', { name: /^View project: / })
+  const cards = page.getByRole('group', { name: / of \d+$/ }).getByRole('link')
   await expect(cards).toHaveCount(projects.length)
   for (const [index, project] of projects.entries()) {
     await expect(cards.nth(index)).toHaveAttribute('href', project.url)
