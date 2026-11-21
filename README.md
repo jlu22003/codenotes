@@ -6,7 +6,7 @@ Most engineering portfolios show only what was shipped. This one also shows the 
 
 ## Highlights
 
-- **Content-driven.** Every page, project write-up and blog post is MDX under [`src/content/`](src/content), rendered through Nextra 4 on the Next.js 15 App Router. Adding a project means adding a file and an entry in `_meta.js`.
+- **Content-driven.** Every page, project write-up and blog post is MDX under [`src/content/`](src/content), rendered through Nextra 4 on the Next.js 16 App Router. Adding a project means adding a file and an entry in `_meta.js`.
 - **Real project write-ups.** Client sites (Laylo Cafe, Equal Justice Studios, Boycott 1902), a Global Game Jam 2026 entry (Maskimum Carnage) and personal projects, each structured as Context → Implementation → Impact.
 - **WebGL hero.** A Three.js particle sphere that follows the cursor and reacts to scroll speed. It recolours with the theme, renders a single still frame for `prefers-reduced-motion`, and is skipped entirely on devices without WebGL.
 - **Site-wide search.** [Pagefind](https://pagefind.app/) indexes the built pages, and search runs fully client-side.
