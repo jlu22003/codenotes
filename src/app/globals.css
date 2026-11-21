@@ -31,7 +31,10 @@
   --destructive-foreground: oklch(1.0000 0 0);
   --border: oklch(0.5538 0.0025 17.2320);
   --input: oklch(1.0000 0 0);
-  --ring: oklch(0.7058 0 0);
+  /* Graphite Ink, per DESIGN.md: the stock oklch(0.7058 0 0) measured ~1.5:1
+     on background and card, under the 3:1 WCAG 1.4.11 minimum for a focus
+     indicator. */
+  --ring: oklch(0.4891 0 0);
 }
 
 .dark {
@@ -51,7 +54,9 @@
   --accent-foreground: oklch(0.3211 0 0);
   --destructive: oklch(0.7915 0.0491 18.2410);
   --destructive-foreground: oklch(0.2891 0 0);
-  --border: oklch(0.4276 0 0);
+  /* Was oklch(0.4276 0 0), 1.54:1 on dark --card: too faint to mark an input
+     boundary. This clears 3:1 on both --card and --background. */
+  --border: oklch(0.6000 0 0);
   --input: oklch(0.3211 0 0);
   --ring: oklch(0.8078 0 0);
 }
@@ -97,7 +102,7 @@
 /* Override specific Nextra styles that might conflict */
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring;
   }
   
   body {
