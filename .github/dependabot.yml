@@ -13,6 +13,12 @@ updates:
         update-types: [minor, patch]
       npm-major:
         update-types: [major]
+    ignore:
+      # TypeScript 7 (the native rewrite) has no classic `ts.sys`, which breaks
+      # twoslash (Nextra's code-block highlighter) and fails the build. Drop
+      # this once twoslash's typescript peer range includes ^7.
+      - dependency-name: typescript
+        update-types: ['version-update:semver-major']
   - package-ecosystem: github-actions
     directory: /
     schedule:

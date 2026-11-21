@@ -1,27 +1,28 @@
-import { dirname } from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
+import { defineConfig, globalIgnores } from "eslint/config";
+import nextVitals from "eslint-config-next/core-web-vitals";
+import nextTs from "eslint-config-next/typescript";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
-
-const eslintConfig = [
-  ...compat.extends("next/core-web-vitals", "next/typescript"),
+const eslintConfig = defineConfig([
+  ...nextVitals,
+  ...nextTs,
   {
-    ignores: [
-      "node_modules/**",
-      ".next/**",
-      "out/**",
-      "build/**",
-      "next-env.d.ts",
-      "public/_pagefind/**",
-      ".impeccable/**",
-    ],
+    // New in eslint-config-next 16 (React Compiler rules). The flagged effects
+    // are deliberate post-mount and external-store syncs (theme-dependent
+    // images, matchMedia, autofilled form values, carousel state); keep them
+    // visible as warnings rather than rewriting them in a dependency bump.
+    rules: {
+      "react-hooks/set-state-in-effect": "warn",
+    },
   },
-];
+  globalIgnores([
+    "node_modules/**",
+    ".next/**",
+    "out/**",
+    "build/**",
+    "next-env.d.ts",
+    "public/_pagefind/**",
+    ".impeccable/**",
+  ]),
+]);
 
 export default eslintConfig;

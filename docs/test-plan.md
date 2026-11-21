@@ -96,7 +96,7 @@ At the time of writing: 27 pass, 2 fail (the contrast bug in §7), 1 skipped.
 
 Check these against the code during brainstorming; if any are wrong, fix this section first.
 
-- **Framework:** Next.js 15 (Turbopack) + Nextra 4 docs theme. Every content page is MDX under `src/content/`, served by the catch-all `src/app/[[...mdxPath]]/page.jsx`.
+- **Framework:** Next.js 16 (Turbopack) + Nextra 4 docs theme. Every content page is MDX under `src/content/`, served by the catch-all `src/app/[[...mdxPath]]/page.jsx`.
 - **Routes:**
   - `/` (home, assembled from `src/components/sections/*`)
   - `/projects` plus 10 project pages

@@ -21,7 +21,7 @@ A personal portfolio site whose job is to get Justin hired — either into a ful
 Most engineering portfolios show only what was shipped. This one also shows the half of the work most portfolios omit entirely: production support — incident response, monitoring, root-cause analysis, SLA discipline — alongside frontend build work. The dual identity (builds things, and keeps things running) is the site's actual differentiator, not a visual style.
 
 ## Operating Context
-- Built with Next.js 15 + Nextra 4 (content-driven via MDX) + Tailwind CSS v4, deployed as a live, continuously-iterated site — not a one-time build.
+- Built with Next.js 16 + Nextra 4 (content-driven via MDX) + Tailwind CSS v4, deployed as a live, continuously-iterated site — not a one-time build.
 - The site is itself one of the projects it showcases: its own architecture (App Router, component structure) is referenced as evidence of engineering practice on the Personal Portfolio project page.
 - Content lives in `src/content/` (portfolio bio, project write-ups, blog) and is edited directly as new work happens — this is an active, evolving document, not a finished artifact.
 
