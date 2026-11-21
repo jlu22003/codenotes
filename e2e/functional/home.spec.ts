@@ -87,21 +87,14 @@ async function frames(page: import('@playwright/test').Page, count: number) {
   )
 }
 
-test('resume button downloads the PDF', { tag: '@functional' }, async ({ page, request }) => {
+test('resume link downloads the PDF', { tag: '@functional' }, async ({ page, request }) => {
   await page.goto('/')
   const download = page.waitForEvent('download')
-  await page.getByRole('button', { name: 'Download Resume' }).click()
+  await page.locator('#contact-me').getByRole('link', { name: 'Download resume' }).click()
   expect((await download).suggestedFilename()).toBe('2025Resume.pdf')
   const pdf = await request.get('/2025Resume.pdf')
   expect(pdf.status()).toBe(200)
   expect(pdf.headers()['content-type']).toContain('application/pdf')
-})
-
-test('resume button hides while over the projects section', { tag: '@functional' }, async ({ page }) => {
-  await page.goto('/')
-  await expect(page.getByRole('button', { name: 'Download Resume' })).toBeVisible()
-  await page.locator('#projects').evaluate((el) => el.scrollIntoView({ block: 'end' }))
-  await expect(page.getByRole('button', { name: 'Download Resume' })).toHaveCount(0) // aria-hidden
 })
 
 test('skills marquee moves and pauses on focus', { tag: '@functional' }, async ({ page }) => {
@@ -178,9 +171,9 @@ test.describe('hero particle sphere', () => {
       const el = page.locator('#particle-sphere-background')
       const elBox = (await el.boundingBox())!
 
-      // Exclude the hero's text block and the fixed resume button (both can
-      // overlap the element's bounding box) so only sphere/background pixels
-      // are sampled — padded 24px for anti-aliased edges.
+      // Exclude the hero's text block (it can overlap the element's bounding
+      // box) so only sphere/background pixels are sampled — padded 24px for
+      // anti-aliased edges.
       const margin = 24
       const exclusions = (
         await Promise.all(
@@ -189,7 +182,6 @@ test.describe('hero particle sphere', () => {
             page.getByText('Software Engineer', { exact: false }),
             page.getByRole('link', { name: 'View Work' }),
             page.getByRole('link', { name: 'Contact Me' }),
-            page.getByRole('button', { name: 'Download Resume' }),
           ].map(async (locator) => {
             const box = await locator.boundingBox()
             if (!box) return null

@@ -162,6 +162,8 @@ test('success message resets the form and clears after 5 seconds', { tag: '@func
   await expect(page.getByRole('status')).toHaveCount(0)
 })
 
+const SEND_FAILED = "Your message wasn't sent. Check your connection and try again, or email justinklu75@gmail.com."
+
 test.describe('failures', () => {
   test.use({ allowedErrors: [/Contact form error/] })
 
@@ -174,7 +176,7 @@ test.describe('failures', () => {
     )
     await fill(page, valid)
     await submit(page)
-    await expect(contactAlert(page)).toContainText('Failed to send message. Please try again.')
+    await expect(contactAlert(page)).toContainText(SEND_FAILED)
     await expect(page.getByLabel('Message', { exact: true })).toHaveValue('Hello')
     fail = false
     await submit(page)
@@ -185,8 +187,29 @@ test.describe('failures', () => {
     await page.route('**/api/contact', (route) => route.abort('failed'))
     await fill(page, valid)
     await submit(page)
-    await expect(contactAlert(page)).toContainText('Failed to send message')
+    await expect(contactAlert(page)).toContainText(SEND_FAILED)
     await expect(page.getByLabel('Email', { exact: true })).toHaveValue('ada@example.com')
+  })
+
+  test('non-JSON server error shows the recovery copy, not a parse error', { tag: '@functional' }, async ({ page }) => {
+    await page.route('**/api/contact', (route) =>
+      route.fulfill({ status: 500, contentType: 'text/html', body: '<html>Internal Server Error</html>' }),
+    )
+    await fill(page, valid)
+    await submit(page)
+    await expect(contactAlert(page)).toContainText(SEND_FAILED)
+    await expect(contactAlert(page)).not.toContainText(/JSON|Unexpected token/)
+  })
+
+  test('field-level 400 keeps the server message on the field', { tag: '@functional' }, async ({ page }) => {
+    await page.route('**/api/contact', (route) =>
+      route.fulfill({ status: 400, json: { error: 'Invalid email format', field: 'email' } }),
+    )
+    await fill(page, valid)
+    await submit(page)
+    await expect(page.getByLabel('Email', { exact: true })).toHaveAttribute('aria-invalid', 'true')
+    await expect(page.locator('#email-error')).toHaveText('Invalid email format')
+    await expect(contactAlert(page)).toContainText('Invalid email format')
   })
 })
 

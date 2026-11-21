@@ -60,8 +60,12 @@ test.describe('phone', () => {
   test('tap targets are at least 44×44', { tag: '@functional' }, async ({ page }) => {
     await page.goto('/')
     const small: string[] = []
-    for (const name of ['Menu', 'Previous Projects', 'Next Projects', 'Download Resume']) {
-      const box = (await page.getByRole('button', { name, exact: true }).boundingBox())!
+    const targets = [
+      ...(['Menu', 'Previous Projects', 'Next Projects'] as const).map((name) => ({ role: 'button' as const, name })),
+      { role: 'link' as const, name: 'Download resume' },
+    ]
+    for (const { role, name } of targets) {
+      const box = (await page.getByRole(role, { name, exact: true }).boundingBox())!
       if (box.width < 44 || box.height < 44) small.push(`${name} ${box.width}×${box.height}`)
     }
     expect(small).toEqual([])
