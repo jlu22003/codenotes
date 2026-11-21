@@ -68,7 +68,7 @@ const Projects = ({
               className="group inline-flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground transition"
             >
               View All Projects
-              <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-1" />
+              <ArrowUpRight className="size-4 transition-transform motion-safe:group-hover:translate-x-1" />
             </Link>
           </div>
 
@@ -125,7 +125,7 @@ const Projects = ({
                   <div className="relative aspect-3/2 overflow-hidden rounded-xl">
                     <div
                       className={cn(
-                        "relative h-full w-full transition-all duration-300 group-hover:scale-105",
+                        "relative h-full w-full transition-[scale,opacity,filter] duration-300 motion-safe:group-hover:scale-105",
                         isPlaceholder
                           ? // Placeholder art shouldn't out-compete a real
                             // screenshot for attention — recede, don't compete.
@@ -174,7 +174,7 @@ const Projects = ({
                     </p>
                     <div className="inline-flex items-center text-sm font-medium text-foreground">
                       <span>Read more</span>
-                      <ArrowRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
+                      <ArrowRight className="ml-2 size-4 transition-transform motion-safe:group-hover:translate-x-1" />
                     </div>
                   </div>
                 </Link>

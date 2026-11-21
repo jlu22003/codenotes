@@ -25,11 +25,10 @@ export default function Hero() {
         // Nextra CSS variable (confirmed absent from the installed package),
         // and the homepage explicitly disables breadcrumb anyway — subtracting
         // it was silently shrinking Hero by a phantom 48px on every load.
-        height: `calc(100dvh - var(--nextra-navbar-height, 64px) - ${STATUS_LINE_HEIGHT_PX}px)`,
-        // Floor so short viewports (landscape phones) can't shrink the
-        // section below what the heading/subtitle/buttons actually need —
-        // the section scrolls a little instead of the content overrunning it.
-        minHeight: "480px",
+        // min-height, not height: at enlarged browser text sizes the content
+        // grows the section instead of clipping. The 480px floor keeps short
+        // viewports (landscape phones) from shrinking it below the content.
+        minHeight: `max(480px, calc(100dvh - var(--nextra-navbar-height, 64px) - ${STATUS_LINE_HEIGHT_PX}px))`,
       }}
     >
       {/* Background */}
@@ -59,7 +58,7 @@ export default function Hero() {
       {/* Content */}
       <div className="relative z-10 container mx-auto max-w-7xl px-8 pb-20 md:pb-32">
         <div className="max-w-4xl">
-          <h1 className="text-4xl sm:text-6xl md:text-8xl mb-4 leading-tight whitespace-nowrap text-foreground">
+          <h1 className="text-4xl sm:text-6xl md:text-8xl mb-4 leading-tight text-foreground">
             Justin K. Lu
           </h1>
 
@@ -71,12 +70,11 @@ export default function Hero() {
               asChild
               size="lg"
               // Default primary hover (bg-primary/90) only nudges opacity
-              // 10% — barely perceptible as a state change. Scoped here
-              // rather than in the shared Button component since this is
-              // the one primary CTA sitting directly over the busiest part
-              // of the particle-sphere background, where a subtle shift is
-              // hardest to notice.
-              className="min-h-12 px-8 text-lg hover:bg-primary/75"
+              // 10% — barely perceptible over the particle sphere. A solid
+              // token (not an alpha tint, which let the background through
+              // and dropped label contrast to ~3:1) keeps the label ≥4.5:1
+              // in both themes while still reading as a clear state change.
+              className="min-h-12 px-8 text-lg hover:bg-foreground"
             >
               <Link href="#projects">View Work</Link>
             </Button>
