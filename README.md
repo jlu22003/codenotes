@@ -18,7 +18,7 @@ Most engineering portfolios show only what was shipped. This one also shows the 
 
 | Area | Tools |
 | --- | --- |
-| Framework | Next.js 15 (App Router, Turbopack), React 19, Nextra 4 (docs theme) |
+| Framework | Next.js 16 (App Router, Turbopack), React 19, Nextra 4 (docs theme) |
 | Language | TypeScript, MDX |
 | Styling | Tailwind CSS v4, shadcn/ui on Radix UI, OKLCH design tokens |
 | Motion & 3D | GSAP, Three.js |
