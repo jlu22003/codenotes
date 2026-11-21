@@ -184,7 +184,7 @@ Corners are moderate and consistent rather than sharp or pill-shaped by default:
 - **Error:** border and ring shift to Alert Red (`aria-invalid` state) — the one place a second hue is permitted, because it's system feedback, not brand color.
 
 ### Navigation
-- **Style:** Nextra's default navbar, restyled to the neutral palette (background/border tokens), sitting above the custom `StatusLine` strip (mono, muted-foreground, no border, 32px tall, present on every page).
+- **Style:** Nextra's default navbar, restyled to the neutral palette (background/border tokens), sitting above the custom `StatusLine` strip (mono, muted-foreground, no border, 32px minimum height so it grows rather than clips at enlarged text sizes, present on every page).
 
 ### Particle Sphere (signature component)
 The hero's WebGL particle field is the system's one sanctioned decorative element. ~1,400 randomized points on a thin spherical shell, rendered as soft dots in Ink Gray, gently rotating; it trails the cursor via a damped spring and displaces outward along independent random vectors as a continuous function of scroll speed, easing back to rest as scrolling slows. It is `aria-hidden` and fully skipped under `prefers-reduced-motion` (renders one static frame instead of animating) — the one place atmosphere is allowed to outrank restraint, and only because it was chosen deliberately as the site's signature rather than defaulted into.
