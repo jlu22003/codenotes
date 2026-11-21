@@ -301,7 +301,6 @@ export default function Contact() {
                 size="lg"
                 className="w-full gap-2"
                 disabled={status === "loading"}
-                aria-label="Submit Contact Form"
               >
                 {status === "loading" ? (
                   <>

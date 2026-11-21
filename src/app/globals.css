@@ -189,7 +189,7 @@
      glyph; the hover fill reuses the same ghost-button treatment the rest
      of the site already uses, so the larger hit area reads as intentional
      rather than as unexplained empty space around a tiny icon. */
-  .nextra-navbar a[aria-label="Home page"],
+  .nextra-navbar a.nav-home,
   .nextra-navbar a[href^="https://github.com/"],
   .nextra-navbar a[href^="https://www.linkedin.com/"] {
     display: inline-flex;
@@ -201,7 +201,7 @@
     transition: background-color 0.15s ease, color 0.15s ease;
   }
 
-  .nextra-navbar a[aria-label="Home page"]:hover,
+  .nextra-navbar a.nav-home:hover,
   .nextra-navbar a[href^="https://github.com/"]:hover,
   .nextra-navbar a[href^="https://www.linkedin.com/"]:hover {
     background-color: var(--accent);
